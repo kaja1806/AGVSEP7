@@ -1,4 +1,3 @@
-using FileData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<FileContext>();
+//builder.Services.AddScoped<FileContext>();
 
 var app = builder.Build();
 
