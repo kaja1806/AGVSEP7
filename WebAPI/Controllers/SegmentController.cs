@@ -52,7 +52,7 @@ public class SegmentController : ControllerBase
             throw;
         }
     }
-
+    }
     /*[HttpPost("SetAgvSegments/")]
     public async Task<IActionResult> SetAgvSegments([FromBody] List<SegmentModel> segmentModels)
     {
