@@ -1,7 +1,23 @@
+using System.Data.SqlClient;
+using Database.SQLHelper;
+using WebAPI.Controllers;
+using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Add configuration settings
+builder.Configuration.AddJsonFile("appsettings.json");
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddScoped<SqlConnection>();
+builder.Services.AddScoped<SqlConnectionClass>();
+builder.Services.AddScoped<IStatorService,StatorService>();
+builder.Services.AddScoped<ISegmentService,SegmentService>();
+
+//builder.Services.AddScoped<ISqlHelperClass, SqlHelperClass>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
