@@ -1,0 +1,45 @@
+@page "/QualityAnalysis"
+
+<div class="card">
+    <h3>Automated Quality Analysis and Adjustments</h3>
+
+    
+    <!-- Automatic Adjustment Table Section -->
+ 
+    <table class="adjustment-table">
+        <thead>
+        <tr>
+            <th>Stator No.</th>
+            <th>Measurement No.</th>
+            <th>Date</th>
+            <th>Air Gap</th>
+            <th>Adjustment</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        
+        <tbody>
+        @*@foreach (var item in todos)*@
+        <tr>
+            <td>Parameter 1</td>
+            @*<td>@parameter1Value</td>
+                <td>@automaticAdjustment1</td>*@
+        </tr>
+        <tr>
+            <td>Parameter 2</td>
+            @*<td>@parameter2Value</td>
+                <td>@automaticAdjustment2</td>*@
+        </tr>
+        <!-- Add more rows for additional parameters -->
+        </tbody>
+    </table>
+</div>
+
+
+
+
+@code { // add this to the updated git for impl test
+
+    // private int MeasurementNo = "";
+   
+}
