@@ -1,5 +1,5 @@
 ﻿namespace Shared.Models;
-
+ //for test commit only;
 public class StatorModel
 {
     public Guid Id { get; set; }
