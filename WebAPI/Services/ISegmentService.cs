@@ -4,7 +4,7 @@ namespace WebAPI.Services;
 
 public interface ISegmentService
 {
-   Task<List<SegmentModel>> GetSegments(Guid statorId);
+    Task<List<SegmentModel>> GetSegments(Guid statorId);
 
-   Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordinates);
+    Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordinates);
 }

@@ -1,9 +1,10 @@
-﻿namespace Shared.Models;
+﻿using static Shared.Enums.StatusEnums;
 
-public class AGVStatusModel
+namespace Shared.Models;
+
+public class AgvStatusModel
 {
-    public int AGVId { get; set; }
-    public int Status { get; set; }
-    public int Location { get; set; }
+    public SegmentStatus Status { get; set; }
+    public string LogText { get; set; }
     public DateTime Timestamp { get; set; }
 }

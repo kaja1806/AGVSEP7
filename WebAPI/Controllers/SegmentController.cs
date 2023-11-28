@@ -9,7 +9,6 @@ namespace WebAPI.Controllers;
 public class SegmentController : ControllerBase
 {
     private readonly ISegmentService _segmentService;
-    private readonly IAgvCommunicationService _agvCommunicationService;
 
     public SegmentController(ISegmentService segmentService)
     {
@@ -52,13 +51,14 @@ public class SegmentController : ControllerBase
             throw;
         }
     }
-    }
-    /*[HttpPost("SetAgvSegments/")]
-    public async Task<IActionResult> SetAgvSegments([FromBody] List<SegmentModel> segmentModels)
+
+    [HttpGet("SendSegmentDataToAGV/{segmentId}")]
+    public async Task<IActionResult> SendSegmentDataToAgv([FromRoute] Guid segmentId)
     {
         try
         {
-
+            var result = await _segmentService.GetSegments(segmentId);
+            return Ok(result);
         }
         catch (Exception e)
         {
@@ -66,6 +66,4 @@ public class SegmentController : ControllerBase
             throw;
         }
     }
-}*/
-
-
+}

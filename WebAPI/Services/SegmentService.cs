@@ -16,29 +16,34 @@ public class SegmentService : ISegmentService
 
     public async Task<List<SegmentModel>> GetSegments(Guid statorId)
     {
-        await using var connection = _sqlConnectionClass.GetConnection();
-        var result = connection
-            .Query<SegmentModel>(
-                $"SELECT SegmentNo,LocationX,LocationZ,LocationY FROM Segment WHERE StatorID = '{statorId}'").ToList();
+        await using (var connection = _sqlConnectionClass.GetConnection())
+        {
+            var result = connection
+                .Query<SegmentModel>(
+                    $"SELECT SegmentNo,LocationX,LocationZ,LocationY FROM Segment WHERE StatorID = '{statorId}'")
+                .ToList();
 
-        return result;
+            return result;
+        }
     }
 
     public async Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordiantes)
     {
-        await using var connection = _sqlConnectionClass.GetConnection();
-        var segmentExist = connection
-            .Query<SegmentModel>(
-                $"SELECT ID FROM Segment WHERE ID = '{segmentId}'").ToList();
-        if (segmentExist.Count != 0)
+        await using (var connection = _sqlConnectionClass.GetConnection())
         {
-            await connection.QuerySingleOrDefaultAsync(
-                $"UPDATE Segment SET LocationX = '{segmentCoordiantes.LocationX}'," +
-                $"LocationY = '{segmentCoordiantes.LocationY}'," +
-                $"LocationZ = '{segmentCoordiantes.LocationZ}' WHERE ID = '{segmentId}'");
-            return "Table edited succesfully";
-        }
+            var segmentExist = connection
+                .Query<SegmentModel>(
+                    $"SELECT ID FROM Segment WHERE ID = '{segmentId}'").ToList();
+            if (segmentExist.Count != 0)
+            {
+                await connection.QuerySingleOrDefaultAsync(
+                    $"UPDATE Segment SET LocationX = '{segmentCoordiantes.LocationX}'," +
+                    $"LocationY = '{segmentCoordiantes.LocationY}'," +
+                    $"LocationZ = '{segmentCoordiantes.LocationZ}' WHERE ID = '{segmentId}'");
+                return "Table edited succesfully";
+            }
 
-        return $"Edit unsuccesful: {segmentId} does not exist in database";
+            return $"Edit unsuccesful: {segmentId} does not exist in database";
+        }
     }
 }
