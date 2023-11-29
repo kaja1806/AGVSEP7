@@ -49,4 +49,23 @@ public class CalculationResultService : ICalculationResultService
 
         return adjustedCalcList;
     }
+
+    public async Task<string> SetCalculationResult(Guid statorId)
+    {
+        var calculationResult = await GetCalculationsFromDb(statorId);
+
+        await using (var connection = _sqlConnectionClass.GetConnection())
+        {
+            foreach (var calculationResults in calculationResult)
+            {
+                var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) < 0.4;
+
+                string query =
+                    $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";
+                await connection.ExecuteAsync(query);
+            }
+
+            return $"Table edited successfully";
+        }
+    }
 }

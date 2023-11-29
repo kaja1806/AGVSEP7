@@ -10,5 +10,5 @@ public class CalculationResultModel
     public double Tolerance { get; set; }
     public double Deviation { get; set; }
     public DateTime Date { get; set; }
-    public int Adjustment { get; set; }
+    public bool Adjustment { get; set; }
 }

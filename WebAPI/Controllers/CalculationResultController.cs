@@ -28,4 +28,21 @@ public class CalculationResultController : ControllerBase
             return StatusCode(500, $"Internal Server Error: {ex.Message}");
         }
     }
-}
+    
+    [HttpPost("SetCalculationResult/{statorId}")]
+
+    public async Task<IActionResult> SetCalculationResult([FromRoute] Guid statorId)
+    {
+            try
+            {
+                var results = await _calculationResultService.SetCalculationResult(statorId);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+    }
+
+    }
+    
