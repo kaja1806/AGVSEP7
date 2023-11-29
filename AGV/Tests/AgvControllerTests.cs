@@ -19,8 +19,7 @@ public class AgvControllerTests
             Coordinates = new Coordinates
             {
                 LocationX = 25,
-                LocationY = 45,
-                LocationZ = 11
+                LocationY = 45
             },
             SegmentNo = 1
         };

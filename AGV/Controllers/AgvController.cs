@@ -14,11 +14,10 @@ public class AgvController
 
     public event EventHandler<AgvLogEventArgs> AgvLogUpdated;
 
-    public void AssignCoordinates(double x, double y, double z, int segmentNo)
+    public void AssignCoordinates(double x, double y, int segmentNo)
     {
         _currentAgvState.Coordinates.LocationX = x;
         _currentAgvState.Coordinates.LocationY = y;
-        _currentAgvState.Coordinates.LocationZ = z;
         _currentAgvState.SegmentNo = segmentNo;
     }
 
@@ -32,7 +31,6 @@ public class AgvController
         // Start the AGV
         LogAction($"AGV started with coordinates: X={_currentAgvState.Coordinates.LocationX}, " +
                   $"Y={_currentAgvState.Coordinates.LocationY}, " +
-                  $"Z={_currentAgvState.Coordinates.LocationZ}, " +
                   $"Segment ID={_currentAgvState.SegmentNo}");
 
         // Simulate AGV actions

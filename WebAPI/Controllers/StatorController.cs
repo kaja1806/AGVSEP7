@@ -25,8 +25,8 @@ public class StatorController : ControllerBase
     {
         try
         { 
-            var result = _statorService.GetStatorModels();
-            return Ok(result);
+            var result = _statorService.GetStator();
+            return Ok(result.Result);
         }
         catch (Exception e)
         {

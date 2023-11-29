@@ -4,5 +4,5 @@ namespace WebAPI.Services;
 
 public interface IStatorService
 {
-    List<StatorModel> GetStatorModels();
+    Task<List<StatorDto>> GetStator();
 }

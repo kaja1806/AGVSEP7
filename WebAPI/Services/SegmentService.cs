@@ -17,7 +17,7 @@ public class SegmentService : ISegmentService
 
     public async Task<List<SegmentModel>> GetSegmentsDb(Guid statorId)
     {
-        string query = $"SELECT SegmentNo,LocationX,LocationZ,LocationY FROM Segment WHERE StatorID = '{statorId}'";
+        string query = $"SELECT * FROM Segment WHERE StatorID = '{statorId}'";
         using var connection = _sqlConnectionClass.GetConnection();
         var result = connection
             .Query<SegmentModel>(query)
@@ -26,19 +26,23 @@ public class SegmentService : ISegmentService
         return result;
     }
 
-    public async Task<List<SegmentDto>> GetSegments(Guid statorId)
+    public async Task<List<SegmentDto>> GetSegmentsForAGV(Guid statorId)
     {
         var segmentResult = await GetSegmentsDb(statorId);
         var segmentList = new List<SegmentDto>();
 
         foreach (var segmentResults in segmentResult)
         {
-            var adjustedCalcDto = new SegmentDto()
+            var segmentDto = new SegmentDto()
             {
                 SegmentNo = segmentResults.SegmentNo,
-                SegmentCoordinates = segmentResults.SegmentCoordinates
+                SegmentCoordinates = new Coordinates
+                {
+                    LocationX = segmentResults.LocationX,
+                    LocationY = segmentResults.LocationY
+                }
             };
-            segmentList.Add(adjustedCalcDto);
+            segmentList.Add(segmentDto);
         }
 
         return segmentList;
@@ -55,8 +59,7 @@ public class SegmentService : ISegmentService
             {
                 await connection.QuerySingleOrDefaultAsync(
                     $"UPDATE Segment SET LocationX = '{segmentCoordiantes.LocationX}'," +
-                    $"LocationY = '{segmentCoordiantes.LocationY}'," +
-                    $"LocationZ = '{segmentCoordiantes.LocationZ}' WHERE ID = '{segmentId}'");
+                    $"LocationY = '{segmentCoordiantes.LocationY}' WHERE ID = '{segmentId}'");
                 return "Table edited succesfully";
             }
 

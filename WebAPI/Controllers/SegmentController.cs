@@ -20,7 +20,7 @@ public class SegmentController : ControllerBase
     {
         try
         {
-            var result = await _segmentService.GetSegments(statorId);
+            var result = await _segmentService.GetSegmentsForAGV(statorId);
             return Ok(result);
         }
         catch (Exception e)
@@ -30,17 +30,16 @@ public class SegmentController : ControllerBase
         }
     }
 
-    [HttpPost("SetSegmentCoordinates/{segmentId},{coordinateX}, {coordinateY}, {coordinateZ}")]
+    [HttpPost("SetSegmentCoordinates/{segmentId},{coordinateX}, {coordinateY}")]
     public async Task<IActionResult> SetSegmentCoordinates([FromRoute] Guid segmentId, double coordinateX,
-        double coordinateY, double coordinateZ)
+        double coordinateY)
     {
         try
         {
             var segmentCoordinates = new Coordinates()
             {
                 LocationX = coordinateX,
-                LocationY = coordinateY,
-                LocationZ = coordinateZ,
+                LocationY = coordinateY
             };
             var result = await _segmentService.SetSegmentCoordinates(segmentId, segmentCoordinates);
             return Ok(result);
@@ -57,7 +56,7 @@ public class SegmentController : ControllerBase
     {
         try
         {
-            var result = await _segmentService.GetSegments(segmentId);
+            var result = await _segmentService.GetSegmentsForAGV(segmentId);
             return Ok(result);
         }
         catch (Exception e)
