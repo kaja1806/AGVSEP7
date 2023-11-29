@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Database.Models;
 using Database.SQLHelper;
 using Shared.Models;
 
@@ -14,17 +15,33 @@ public class SegmentService : ISegmentService
     }
 
 
-    public async Task<List<SegmentModel>> GetSegments(Guid statorId)
+    public async Task<List<SegmentModel>> GetSegmentsDb(Guid statorId)
     {
-        await using (var connection = _sqlConnectionClass.GetConnection())
-        {
-            var result = connection
-                .Query<SegmentModel>(
-                    $"SELECT SegmentNo,LocationX,LocationZ,LocationY FROM Segment WHERE StatorID = '{statorId}'")
-                .ToList();
+        string query = $"SELECT SegmentNo,LocationX,LocationZ,LocationY FROM Segment WHERE StatorID = '{statorId}'";
+        using var connection = _sqlConnectionClass.GetConnection();
+        var result = connection
+            .Query<SegmentModel>(query)
+            .ToList();
 
-            return result;
+        return result;
+    }
+
+    public async Task<List<SegmentDto>> GetSegments(Guid statorId)
+    {
+        var segmentResult = await GetSegmentsDb(statorId);
+        var segmentList = new List<SegmentDto>();
+
+        foreach (var segmentResults in segmentResult)
+        {
+            var adjustedCalcDto = new SegmentDto()
+            {
+                SegmentNo = segmentResults.SegmentNo,
+                SegmentCoordinates = segmentResults.SegmentCoordinates
+            };
+            segmentList.Add(adjustedCalcDto);
         }
+
+        return segmentList;
     }
 
     public async Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordiantes)

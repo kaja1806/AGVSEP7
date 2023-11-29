@@ -1,6 +1,7 @@
-﻿using static Shared.Enums.StatusEnums;
+﻿using Shared.Models;
+using static Shared.Enums.StatusEnums;
 
-namespace Shared.Models;
+namespace Database.Models;
 
 public class SegmentModel
 {

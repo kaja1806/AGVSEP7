@@ -13,8 +13,10 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services.AddControllers();
 builder.Services.AddScoped<SqlConnection>();
 builder.Services.AddScoped<SqlConnectionClass>();
-builder.Services.AddScoped<IStatorService,StatorService>();
-builder.Services.AddScoped<ISegmentService,SegmentService>();
+builder.Services.AddScoped<IStatorService, StatorService>();
+builder.Services.AddScoped<ISegmentService, SegmentService>();
+builder.Services.AddScoped<ICalculationResultService, CalculationResultService>();
+builder.Services.AddScoped<IAgvService, AgvService>();
 
 //builder.Services.AddScoped<ISqlHelperClass, SqlHelperClass>();
 

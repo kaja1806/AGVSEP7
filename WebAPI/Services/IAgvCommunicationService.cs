@@ -1,4 +1,4 @@
-﻿using Shared.Models;
+﻿using Database.Models;
 
 namespace WebAPI.Services;
 

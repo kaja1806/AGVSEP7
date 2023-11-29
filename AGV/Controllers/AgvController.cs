@@ -33,20 +33,19 @@ public class AgvController
         LogAction($"AGV started with coordinates: X={_currentAgvState.Coordinates.LocationX}, " +
                   $"Y={_currentAgvState.Coordinates.LocationY}, " +
                   $"Z={_currentAgvState.Coordinates.LocationZ}, " +
-                  $"Segment ID={_currentAgvState.SegmentNo}", SegmentStatus.Waiting);
+                  $"Segment ID={_currentAgvState.SegmentNo}");
 
         // Simulate AGV actions
         await MoveToPosition(_currentAgvState);
         // ... (other actions)
     }
 
-    private void LogAction(string action, SegmentStatus status)
+    private void LogAction(string action)
     {
         var logEntry = new AgvStatusModel
         {
             Timestamp = DateTime.Now,
-            LogText = action,
-            Status = status
+            LogText = action
         };
         _log.Add(logEntry);
     }
@@ -58,13 +57,13 @@ public class AgvController
 
     public void InstallingSegment()
     {
-        LogAction("Picking up segment", SegmentStatus.Installation);
+        LogAction("Picking up segment");
         // Logic for Installing Segment
     }
 
     public async Task MoveToPosition(AgvModel position)
     {
-        LogAction($"Moving to segment: {position.SegmentNo}", SegmentStatus.Transport);
+        LogAction($"Moving to segment: {position.SegmentNo}");
     }
 
     public void SaveLogToJson(string filePath, Guid statorId)
