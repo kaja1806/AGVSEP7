@@ -10,7 +10,7 @@
     border-radius: 15px;
 }
 
-/*testing changes here*/
+
 .adjustment-table-header {
     width: 100%;
     margin-top: 20px;
@@ -32,12 +32,15 @@
     border: 1px solid #ddd;
 }
 
+
+/*  for Adjustment at one color only for now */
 .adjustment-table th, .adjustment-table td {
     border: 1px solid #ddd;
     padding: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 .adjustment-table th {
     background-color: #f2f2f2;
 }
+

@@ -7,9 +7,10 @@
  
     <div class="adjustment-table-header">
         
-        <p>StatorNo.:</p>
-        <p>MeasurementNo.:</p>
-        <p>Date:</p>
+       <p>StatorNo.:</p>
+       <p>MeasurementNo.:</p>
+       <p>Date:</p>
+
         
     </div>
     
@@ -23,22 +24,20 @@
         </thead>
     
         <tbody>
-      @*@foreach(varitemintodos)*@
-      <tr>
-        <td>Parameter1</td>
-
-          </tr>
-      <tr>
-      
-         <td>Parameter2</td>  
-      </tr>
-      <!--Addmorerowsforadditionalparameters-->
-
-        </tbody>
+        @*@foreach()*@
+        
+        @*written test data only not coded*@
+        <tr>
+            <td>0.56</td>
+            <td>0.16</td>
+            <td>Required</td>
+        </tr>
+        
+        
+        
+       </tbody>
     </table>
-
-    
-    
+   
     
 </div>
 
@@ -49,4 +48,18 @@
 
     // private int MeasurementNo = "";
    
+    // TEST for Adjustment column colors
+
+    /*
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+    // Execute JavaScript function after rendering
+            await JSRuntime.InvokeVoidAsync("adjustmentTableColor");
+        }
+    }
+    */
+
+
 }
