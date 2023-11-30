@@ -6,35 +6,44 @@
     
     <!-- Automatic Adjustment Table Section -->
  
+    <div class="adjustment-table-header">
+        
+            <p>Stator No.:</p>
+            <p>Measurement No.:</p>
+            <p>Date:</p>
+        
+    </div>
+    
     <table class="adjustment-table">
         <thead>
-        <tr>
-            <th>Stator No.</th>
-            <th>Measurement No.</th>
-            <th>Date</th>
-            
-            <th>Measurement Value</th>
-            <th>Deviation</th>
-            <th>Adjustment</th>
-            <th>Action</th>
-        </tr>
+            <tr>
+                <th>Measurement Value</th>
+                <th>Deviation</th>
+                <th>Adjustment</th>
+                <th>Action</th>
+            </tr>
         </thead>
-        
+    
         <tbody>
-        @*@foreach (var item in todos)*@
-        <tr>
-            <td>Parameter 1</td>
-            @*<td>@parameter1Value</td>
-                <td>@automaticAdjustment1</td>*@
-        </tr>
-        <tr>
-            <td>Parameter 2</td>
-            @*<td>@parameter2Value</td>
-                <td>@automaticAdjustment2</td>*@
-        </tr>
-        <!-- Add more rows for additional parameters -->
+      @*@foreach(varitemintodos)*@
+      <tr>
+      <td>Parameter1</td>
+      @*<td>@parameter1Value</td>
+      <td>@automaticAdjustment1</td>*@
+      </tr>
+      <tr>
+      <td>Parameter2</td>
+      @*<td>@parameter2Value</td>
+      <td>@automaticAdjustment2</td>*@
+      </tr>
+      <!--Addmorerowsforadditionalparameters-->
+
         </tbody>
     </table>
+
+    
+    
+    
 </div>
 
 

@@ -1,7 +1,7 @@
 .card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-    width: 80%;
+    width: 90%;
     max-width: 800px;
     padding: 25px;
     text-align: center;
@@ -10,6 +10,19 @@
     border-radius: 15px;
 }
 
+.adjustment-table-header {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.adjustment-table-header p {
+    margin-right: 20px;
+    text-align: left;
+    align-items: flex-start;
+}
 .adjustment-table {
     width: 100%;
     margin-top: 20px;
