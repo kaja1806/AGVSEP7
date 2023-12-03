@@ -16,11 +16,9 @@ public class StatorService : IStatorService
 
     public async Task<List<StatorModel>> GetStatorDb()
     {
-        await using (var connection = _sqlConnectionClass.GetConnection())
-        {
-            List<StatorModel> result = connection.Query<StatorModel>(@"SELECT * FROM Stator").ToList();
-            return result;
-        }
+        await using var connection = _sqlConnectionClass.GetConnection();
+        List<StatorModel> result = connection.Query<StatorModel>(@"SELECT * FROM Stator").ToList();
+        return result;
     }
 
     public async Task<List<StatorDto>> GetStator()
@@ -40,7 +38,6 @@ public class StatorService : IStatorService
                 NdeRadius = statorResults.NdeRadius,
                 MidRadius = statorResults.MidRadius,
                 DeRadius = statorResults.DeRadius,
-                MeasurementCount = statorResults.MeasurementCount
             };
             statorList.Add(statorDto);
         }

@@ -14,11 +14,18 @@ public class CalculationResultService : ICalculationResultService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-    public async Task<List<CalculationResultModel>> GetCalculationsFromDb(Guid statorId)
+    public async Task<List<CalculationResultModel>> GetCalculationsFromDb(string? statorNo)
     {
+        string? condition = null;
+        if (statorNo != null)
+        {
+            condition = $"where StatorNo = '{statorNo}'";
+        }
+
         string query =
-            $"select Date, MeasuredValue, Tolerance, SegmentId, S.SegmentNo from CalculationResult" +
-            $" inner join dbo.Segment S on S.ID = CalculationResult.SegmentId where StatorID = '{statorId}'";
+            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, ST.StatorNo from CalculationResult CR " +
+            $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
+            $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
         using var connection = _sqlConnectionClass.GetConnection();
 
         var result = connection
@@ -26,9 +33,9 @@ public class CalculationResultService : ICalculationResultService
         return result;
     }
 
-    public async Task<List<AdjustedCalculationDto>> GetCalculationResults(Guid statorId)
+    public async Task<List<AdjustedCalculationDto>> GetCalculationResult(string? statorNo)
     {
-        var calculationResult = await GetCalculationsFromDb(statorId);
+        var calculationResult = await GetCalculationsFromDb(statorNo);
         var adjustedCalcList = new List<AdjustedCalculationDto>();
 
         foreach (var calculationResults in calculationResult)
@@ -42,7 +49,8 @@ public class CalculationResultService : ICalculationResultService
                 MeasuredValue = calculationResults.MeasuredValue,
                 Deviation = calculationResults.MeasuredValue - calculationResults.Tolerance,
                 AdjustmentNeeded = toleranceBool,
-                SegmentNo = calculationResults.SegmentNo
+                SegmentNo = calculationResults.SegmentNo,
+                StatorNo = calculationResults.StatorNo
             };
             adjustedCalcList.Add(adjustedCalcDto);
         }
@@ -50,9 +58,10 @@ public class CalculationResultService : ICalculationResultService
         return adjustedCalcList;
     }
 
-    public async Task<string> SetCalculationResult(Guid statorId)
+
+    public async Task<string> SetCalculationResult(string statorNo)
     {
-        var calculationResult = await GetCalculationsFromDb(statorId);
+        var calculationResult = await GetCalculationsFromDb(statorNo);
 
         await using (var connection = _sqlConnectionClass.GetConnection())
         {

@@ -6,6 +6,7 @@ public class CalculationResultModel
 {
     public Guid SegmentId { get; set; }
     public int SegmentNo { get; set; }
+    public string StatorNo { get; set; }
     public double MeasuredValue { get; set; }
     public double Tolerance { get; set; }
     public double Deviation { get; set; }

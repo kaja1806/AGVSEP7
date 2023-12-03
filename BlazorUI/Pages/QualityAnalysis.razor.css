@@ -10,19 +10,17 @@
     border-radius: 15px;
 }
 
-
 .adjustment-table-header {
     width: 100%;
     margin-top: 20px;
     display: flex;
-    flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-  }
+}
 
 .adjustment-table-header p {
-    margin-bottom: 10px;
-      text-align: left;
+    margin-right: 20px;
+    text-align: left;
     align-items: flex-start;
 }
 .adjustment-table {
@@ -32,15 +30,12 @@
     border: 1px solid #ddd;
 }
 
-
-/*  for Adjustment at one color only for now */
 .adjustment-table th, .adjustment-table td {
     border: 1px solid #ddd;
     padding: 8px;
-    text-align: center;
+    text-align: left;
 }
 
 .adjustment-table th {
     background-color: #f2f2f2;
 }
-

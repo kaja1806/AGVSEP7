@@ -15,12 +15,25 @@ public class CalculationResultController : ControllerBase
     }
 
 
-    [HttpGet("GetCalculationResult/{statorId}")]
-    public IActionResult GetCalculationResults([FromRoute] Guid statorId)
+    [HttpGet("GetCalculationResult/{statorNo}")]
+    public IActionResult GetCalculationResult([FromRoute] string statorNo)
     {
         try
         {
-            var results = _calculationResultService.GetCalculationResults(statorId);
+            var results = _calculationResultService.GetCalculationResult(statorNo);
+            return Ok(results.Result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
+    [HttpGet("GetAllCalculationResults")]
+    public IActionResult GetAllCalculationResults()
+    {
+        try
+        {
+            var results = _calculationResultService.GetCalculationResult(null);
             return Ok(results.Result);
         }
         catch (Exception ex)
@@ -29,13 +42,13 @@ public class CalculationResultController : ControllerBase
         }
     }
     
-    [HttpPost("SetCalculationResult/{statorId}")]
+    [HttpPost("SetCalculationResult/{statorNo}")]
 
-    public async Task<IActionResult> SetCalculationResult([FromRoute] Guid statorId)
+    public async Task<IActionResult> SetCalculationResult([FromRoute] string statorNo)
     {
             try
             {
-                var results = await _calculationResultService.SetCalculationResult(statorId);
+                var results = await _calculationResultService.SetCalculationResult(statorNo);
                 return Ok(results);
             }
             catch (Exception ex)

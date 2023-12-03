@@ -1,65 +1,56 @@
 @page "/QualityAnalysis"
+@using global::Shared.Models
+@inject HttpClient HttpClient
 
 <div class="card">
     <h3>Automated Quality Analysis and Adjustments</h3>
 
-    
- 
-    <div class="adjustment-table-header">
-        
-       <p>StatorNo.:</p>
-       <p>MeasurementNo.:</p>
-       <p>Date:</p>
+    <h3>Measurement Data</h3>
 
-        
-    </div>
-    
     <table class="adjustment-table">
         <thead>
-            <tr>
-                <th>Measurement Value</th>
-                <th>Deviation</th>
-                <th>Adjustment</th>
-            </tr>
-        </thead>
-    
-        <tbody>
-        @*@foreach()*@
-        
-        @*written test data only not coded*@
         <tr>
-            <td>0.56</td>
-            <td>0.16</td>
-            <td>Required</td>
+            <th>Date</th>
+            <th>Measured Value</th>
+            <th>Tolerance</th>
+            <th>Deviation</th>
+            <th>Adjustment Needed</th>
+            <th>Segment No</th>
+            <th>Stator No</th>
         </tr>
-        
-        
-        
-       </tbody>
+        </thead>
+        <tbody>
+        @if (_calculationResults != null)
+        {
+            @foreach (var measurement in _calculationResults)
+            {
+                <tr>
+                    <td>@measurement.Date.ToShortDateString()</td>
+                    <td>@measurement.MeasuredValue.ToString("F2")</td>
+                    <td>@measurement.Tolerance.ToString("F2")</td>
+                    <td>@measurement.Deviation.ToString("F2")</td>
+                    <td>@(measurement.AdjustmentNeeded ? "Yes" : "No")</td>
+                    <td>@measurement.SegmentNo.ToString("F1")</td>
+                    <td>@measurement.StatorNo</td>
+                </tr>
+            }
+        }
+        </tbody>
     </table>
-   
-    
 </div>
 
 
+@code {
+    private List<AdjustedCalculationDto>? _calculationResults;
 
-
-@code { // add this to the updated git for impl test
-
-    // private int MeasurementNo = "";
-   
-    // TEST for Adjustment column colors
-
-    /*
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-    // Execute JavaScript function after rendering
-            await JSRuntime.InvokeVoidAsync("adjustmentTableColor");
-        }
+        await GetCalculationResult();
     }
-    */
 
+    private async Task GetCalculationResult()
+    {
+        _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetAllCalculationResults") ?? throw new InvalidOperationException();
+    }
 
 }

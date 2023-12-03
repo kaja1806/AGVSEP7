@@ -10,5 +10,4 @@ public class StatorDto
     public decimal NdeRadius { get; set; }
     public decimal MidRadius { get; set; }
     public decimal DeRadius { get; set; }
-    public int MeasurementCount { get; set; }
 }
