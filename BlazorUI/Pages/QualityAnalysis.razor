@@ -1,3 +1,4 @@
+<!-- QualityAnalysis.razor -->
 @page "/QualityAnalysis"
 @using global::Shared.Models
 @inject HttpClient HttpClient
@@ -6,6 +7,8 @@
     <h3>Automated Quality Analysis and Adjustments</h3>
 
     <h3>Measurement Data</h3>
+
+    <button class="btn btn-primary" @onclick="RefreshData">Refresh</button>
 
     <table class="adjustment-table">
         <thead>
@@ -29,7 +32,7 @@
                     <td>@measurement.MeasuredValue.ToString("F2")</td>
                     <td>@measurement.Tolerance.ToString("F2")</td>
                     <td>@measurement.Deviation.ToString("F2")</td>
-                    <td>@(measurement.AdjustmentNeeded ? "Yes" : "No")</td>
+                    <td style="@GetAdjustmentStyle(measurement)">@((measurement.AdjustmentNeeded ? "Yes" : "No"))</td>
                     <td>@measurement.SegmentNo.ToString("F1")</td>
                     <td>@measurement.StatorNo</td>
                 </tr>
@@ -38,7 +41,6 @@
         </tbody>
     </table>
 </div>
-
 
 @code {
     private List<AdjustedCalculationDto>? _calculationResults;
@@ -51,6 +53,20 @@
     private async Task GetCalculationResult()
     {
         _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetAllCalculationResults") ?? throw new InvalidOperationException();
+    }
+
+    private async Task RefreshData()
+    {
+        await GetCalculationResult();
+        StateHasChanged(); // Trigger UI update
+    }
+
+    private string GetAdjustmentStyle(AdjustedCalculationDto measurement)
+    {
+    // Apply background colors to the cell based on Adjustment Needed
+        return measurement.AdjustmentNeeded
+            ? "background-color: #f2dede;" // Light red background
+            : "background-color: #dff0d8;"; // Light green background
     }
 
 }

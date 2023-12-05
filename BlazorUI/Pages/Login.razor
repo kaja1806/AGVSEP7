@@ -1,0 +1,60 @@
+@*@page "/Login"
+@inject NavigationManager NavMgr
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="card">
+            <h3>Please login</h3>
+            <div class="field">
+                <label>User name:</label>
+                <input type="text" @bind="userName"/>
+            </div>
+            <div class="field">
+                <label style="text-align: center">Password:</label>
+                <input type="password" @bind="password"/>
+            </div>
+            @if (!string.IsNullOrEmpty(errorLabel))
+            {
+                <div class="field">
+                    <label style="color: red">
+                        @errorLabel
+                    </label>
+                </div>
+            }
+            <div class="field">
+                <button class="loginbtn" @onclick="LoginAsync">Log in</button>
+            </div>
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        <div class="card">
+            <h3>Hello, @context.User.Identity?.Name</h3>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    // declaring variables
+    private string userName;
+    private string password;
+    private string errorLabel;
+    
+    // asyncrhronous method for user login
+    private async Task LoginAsync()
+    {
+        errorLabel = "";
+        try
+        {
+    // attempt to log in
+            await AuthService.LoginAsync(userName, password);
+    // redirect to the home page after successful login
+            NavMgr.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+    // display error message
+            errorLabel = $"Error: {e.Message}";
+        }
+    }
+}*@

@@ -23,7 +23,7 @@ public class CalculationResultService : ICalculationResultService
         }
 
         string query =
-            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, ST.StatorNo from CalculationResult CR " +
+            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, ST.StatorNo from CalculationResult CR " +
             $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
             $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
         using var connection = _sqlConnectionClass.GetConnection();
@@ -61,20 +61,28 @@ public class CalculationResultService : ICalculationResultService
 
     public async Task<string> SetCalculationResult(string statorNo)
     {
-        var calculationResult = await GetCalculationsFromDb(statorNo);
-
-        await using (var connection = _sqlConnectionClass.GetConnection())
+        try
         {
-            foreach (var calculationResults in calculationResult)
+            var calculationResult = await GetCalculationsFromDb(statorNo);
+
+            await using (var connection = _sqlConnectionClass.GetConnection())
             {
-                var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) < 0.4;
+                foreach (var calculationResults in calculationResult)
+                {
+                    var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) > 0.4;
 
-                string query =
-                    $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";
-                await connection.ExecuteAsync(query);
+                    string query =
+                        $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";
+                    await connection.ExecuteAsync(query);
+                }
+
+                return $"Table edited successfully";
             }
-
-            return $"Table edited successfully";
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

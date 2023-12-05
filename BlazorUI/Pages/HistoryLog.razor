@@ -1,0 +1,132 @@
+﻿@page "/HistoryLog"
+@using global::Shared.Models
+@inject HttpClient HttpClient
+
+<div class="container mt-5">
+    <h2 class="text-center">History Log</h2>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter Stator Number" @bind="statorNo"/>
+                <button class="btn btn-primary" @onclick="GetResults">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stator Information -->
+    @if (_statorResult != null)
+    {
+        <div class="row mb-4">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Stator Information</h5>
+                        <p>
+                            <strong>Stator No.:</strong> @_statorResult.StatorNo
+                        </p>
+                        <p>
+                            <strong>Date:</strong> @_statorResult.Date
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Measurement Data Table -->
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            @if (errorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+            }
+            else
+            {
+                @if (_calculationResults != null && _calculationResults.Any())
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Measured Value</th>
+                            <th>Tolerance</th>
+                            <th>Deviation</th>
+                            <th>Adjustment Needed</th>
+                            <th>Segment No</th>
+                            <th>Stator No</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var measurement in _calculationResults)
+                        {
+                            <tr>
+                                <td>@measurement.Date.ToShortDateString()</td>
+                                <td>@measurement.MeasuredValue.ToString("F2")</td>
+                                <td>@measurement.Tolerance.ToString("F2")</td>
+                                <td>@measurement.Deviation.ToString("F2")</td>
+                                <td>@(measurement.AdjustmentNeeded ? "Yes" : "No")</td>
+                                <td>@measurement.SegmentNo.ToString("F1")</td>
+                                <td>@measurement.StatorNo</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p></p>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<AdjustedCalculationDto>? _calculationResults;
+    private StatorDto? _statorResult;
+    private string statorNo;
+    private string errorMessage;
+
+    private async Task GetResults()
+    {
+        try
+        {
+            await GetStator(); // Re-initialize _statorResult
+            await GetCalculationResult(); // Fetch calculation results
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task GetCalculationResult()
+    {
+        if (statorNo != string.Empty)
+        {
+            _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetCalculationResult/{statorNo}") ?? throw new InvalidOperationException();
+            errorMessage = null; // Reset error message if successful
+            StateHasChanged(); // Trigger UI update
+        }
+    }
+
+    private async Task GetStator()
+    {
+        var result = await HttpClient.GetFromJsonAsync<List<StatorDto>>($"api/Stator/GetStator");
+
+        if (result != null)
+        {
+            _statorResult = result.FirstOrDefault(x => x.StatorNo == statorNo);
+
+            if (_statorResult == null)
+            {
+                throw new Exception("Stator not found.");
+            }
+        }
+    }
+
+}

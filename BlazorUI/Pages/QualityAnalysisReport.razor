@@ -1,0 +1,108 @@
+﻿@page "/QualityAnalysisReport"
+
+<h1>Quality Analysis Report</h1>
+
+<ul class="month-list">
+    @foreach (var month in Months)
+    {
+        <li class="month-item" @onclick="() => ShowReport(month)">@month</li>
+    }
+</ul>
+
+<div class="report-container">
+    @if (!string.IsNullOrEmpty(SelectedReport))
+    {
+        <div class="report-content">
+            <h2>@SelectedMonth Quality Analysis Report</h2>
+            <p>@SelectedReport</p>
+
+            <div class="report-details">
+                <h3>Monthly Statistics</h3>
+                <ul>
+                    <li>
+                        <strong>Number of Stators Assembled:</strong> @GetRandomNumber(100, 1000)
+                    </li>
+                    <li>
+                        <strong>Total number of Adjustments:</strong> @GetRandomNumber(5, 50)
+                    </li>
+                    <li><strong>Total downtime:</strong> @GetRandomNumber(1, 10) hours</li>
+                    <li>
+                        <strong>Incidents at Work:</strong> @GetRandomNumber(0, 5)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Dummy data for demonstration
+    private readonly List<string> Months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+    private string SelectedMonth { get; set; }
+    private string SelectedReport { get; set; }
+
+    private readonly Dictionary<string, string> Reports = new Dictionary<string, string>
+    {
+        { "January", "Quality report for January" },
+        { "February", "Quality report for February" },
+        { "March", "Quality report for March" },
+        { "April", "Quality report for April" },
+        { "May", "Quality report for May" },
+        { "June", "Quality report for June" },
+        { "July", "Quality report for July" },
+        { "August", "Quality report for August" },
+        { "September", "Quality report for September" },
+        { "October", "Quality report for October" },
+        { "November", "Quality report for November" },
+        { "December", "Quality report for December" }
+    };
+
+    private void ShowReport(string month)
+    {
+        SelectedMonth = month;
+        SelectedReport = Reports.ContainsKey(month) ? Reports[month] : string.Empty;
+    }
+
+    private int GetRandomNumber(int minValue, int maxValue)
+    {
+        Random random = new Random();
+        return random.Next(minValue, maxValue + 1);
+    }
+
+}
+
+<style>
+    .month-list {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .month-item {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .month-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .report-container {
+        margin-top: 20px;
+    }
+
+    .report-content {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .report-details {
+        margin-top: 20px;
+    }
+</style>

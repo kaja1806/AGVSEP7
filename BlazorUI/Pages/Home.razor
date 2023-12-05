@@ -1,17 +1,172 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+@inject IJSRuntime JSRuntime
+<style>
+    /* Add this CSS to your styles.css or include it in your Blazor component */
 
+    /* KPI Card Styling */
+    .kpi-card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-@*
-<h3>Welcome to App</h3>
-*@
+    .kpi-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff; /* Blue color for value */
+    }
 
+    .kpi-description {
+        font-size: 14px;
+        color: #6c757d; /* Gray color for description */
+    }
 
-<div>
-    @*<h4>Application Overview</h4>
-    <p>Your application aims to automate data exchange in the production process, control AGV operations, and provide reports on various aspects.</p>
-    *@
- <img src="https://www.slideteam.net/media/catalog/product/cache/1280x720/e/n/environmental_sustainability_kpi_dashboard_showing_social_footprint_and_supply_chain_category_Slide01.jpg" alt="Homepage Placeholder" style="width: 100%; height: auto;" />
-    
+    /* Dashboard Layout Styling */
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    /* Additional Visual Elements */
+    .visual-element {
+        margin-top: 20px;
+    }
+
+    /* Chart Styling */
+    .chart-container {
+        margin-top: 20px;
+        max-width: 600px;
+    }
+
+    /* Table Styling */
+    .table {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    /* Adjusted KPIs Overview and Sustainability Metrics Styling */
+    h3.text-center {
+        margin-top: 40px;
+        color: #343a40; /* Dark color for heading */
+    }
+
+    .kpi-overview {
+        background-color: #f8f9fa; /* Light gray background color */
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sustainability-metrics {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        background-color: #f8f9fa; /* Light gray background color */
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center">Production and Sustainability Dashboard</h2>
+
+    <h3 class="text-center">KPIs Overview</h3>
+
+    <!-- KPI Overview -->
+    <div class="row kpi-overview">
+        <!-- KPI Card 1 -->
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <span class="bi bi-gear-wide-connected kpi-icon"></span>
+                <h4>Production Efficiency</h4>
+                <p class="kpi-value">85%</p>
+                <p class="kpi-description">Overall equipment efficiency (OEE)</p>
+            </div>
+        </div>
+
+        <!-- KPI Card 2 -->
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <span class="bi bi-stopwatch kpi-icon"></span>
+                <h4>Downtime</h4>
+                <p class="kpi-value">2 hours</p>
+                <p class="kpi-description">Total downtime in the last 24 hours</p>
+            </div>
+        </div>
+
+        <!-- KPI Card 3 -->
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <span class="bi bi-box kpi-icon"></span>
+                <h4>Production Volume</h4>
+                <p class="kpi-value">100 units</p>
+                <p class="kpi-description">Total units produced this month</p>
+            </div>
+        </div>
+
+        <!--  KPI Card 4 -->
+        <div class="col-md-4">
+            <div class="kpi-card">
+                <span class="bi bi-award kpi-icon"></span>
+                <h4>Employee satisfaction</h4>
+                <p class="kpi-value">89%</p>
+                <p class="kpi-description">Overall employee satisfaction score</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-center">Sustainability Metrics</h3>
+
+    <!-- Sustainability Metrics -->
+    <div class="sustainability-metrics">
+        <!-- Sustainability Card 1 -->
+        <div class="col-md-4">
+            <div class="sustainability-card">
+                <span class="bi bi-tree kpi-icon"></span>
+                <h4>Carbon Footprint</h4>
+                <p class="kpi-value">5 tons CO2</p>
+                <p class="kpi-description">Reduced carbon emissions this month</p>
+            </div>
+        </div>
+
+        <!-- Sustainability Card 2 -->
+        <div class="col-md-4">
+            <div class="sustainability-card">
+                <span class="bi bi-droplet kpi-icon"></span>
+                <h4>Water Usage</h4>
+                <p class="kpi-value">50 liters</p>
+                <p class="kpi-description">Water consumption this month</p>
+            </div>
+        </div>
+
+        <!-- Sustainability Card 3 (New ESG Score Card) -->
+        <div class="col-md-4">
+            <div class="sustainability-card">
+                <span class="bi bi-award kpi-icon"></span>
+                <h4>ESG Score</h4>
+                <p class="kpi-value">85</p>
+                <p class="kpi-description">Environmental, Social, Governance score</p>
+            </div>
+        </div>
+    </div>
 </div>

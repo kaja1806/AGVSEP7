@@ -9,9 +9,8 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href= ""Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
@@ -34,7 +33,12 @@
             </NavLink>
         </div>
 
-
+        <!-- Add a link to QualityAnalysisReport in the NavMenu -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="HistoryLog">
+                <span class="oi oi-list" aria-hidden="true"></span> History Log
+            </NavLink>
+        </div>
     </nav>
 </div>
 

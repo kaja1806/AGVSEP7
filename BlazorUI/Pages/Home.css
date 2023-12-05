@@ -1,0 +1,56 @@
+/* Add this CSS to your styles.css or include it in your Blazor component */
+
+/* KPI Card Styling */
+.kpi-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.kpi-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff; /* Blue color for value */
+}
+
+.kpi-description {
+    font-size: 14px;
+    color: #6c757d; /* Gray color for description */
+}
+
+/* Dashboard Layout Styling */
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Additional Visual Elements */
+.visual-element {
+    margin-top: 20px;
+}
+
+/* Chart Styling */
+.chart-container {
+    margin-top: 20px;
+    max-width: 600px;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: center;
+}
