@@ -1,60 +1,49 @@
-@*@page "/Login"
-@inject NavigationManager NavMgr
+@page "/Login"
+@inject NavigationManager NavigationManager
 
-<AuthorizeView>
-    <NotAuthorized>
-        <div class="card">
-            <h3>Please login</h3>
-            <div class="field">
-                <label>User name:</label>
-                <input type="text" @bind="userName"/>
-            </div>
-            <div class="field">
-                <label style="text-align: center">Password:</label>
-                <input type="password" @bind="password"/>
-            </div>
-            @if (!string.IsNullOrEmpty(errorLabel))
-            {
-                <div class="field">
-                    <label style="color: red">
-                        @errorLabel
-                    </label>
-                </div>
-            }
-            <div class="field">
-                <button class="loginbtn" @onclick="LoginAsync">Log in</button>
-            </div>
-        </div>
-    </NotAuthorized>
-    <Authorized>
-        <div class="card">
-            <h3>Hello, @context.User.Identity?.Name</h3>
-        </div>
-    </Authorized>
-</AuthorizeView>
+<div class="container mt-5">
+    <h3 class="mb-4">Login</h3>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" id="email" class="form-control" @bind="email" />
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" class="form-control" @bind="password" />
+        <span class="text-danger">@errorMessage</span>
+    </div>
+
+    <button class="btn btn-primary" @onclick="LoginUser">Log in</button>
+</div>
 
 @code {
-    // declaring variables
-    private string userName;
+    private string email;
     private string password;
-    private string errorLabel;
-    
-    // asyncrhronous method for user login
-    private async Task LoginAsync()
+    private string errorMessage;
+
+    private async Task LoginUser()
     {
-        errorLabel = "";
         try
         {
-    // attempt to log in
-            await AuthService.LoginAsync(userName, password);
-    // redirect to the home page after successful login
-            NavMgr.NavigateTo("/");
+    //   authentication logic should be added here
+            if (email == "user@company.com" && password == "password123")
+            {
+    // successful login
+                errorMessage = string.Empty;
+                NavigationManager.NavigateTo("/"); // Redirect to the main page
+            }
+            else
+            {
+    // invalid credentials
+                errorMessage = "Invalid email or password";
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-    // display error message
-            errorLabel = $"Error: {e.Message}";
+    //  other exceptions
+            errorMessage = $"Error: {e.Message}";
         }
     }
-}*@
+}

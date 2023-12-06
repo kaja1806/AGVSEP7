@@ -13,6 +13,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.14" PrivateAssets="all"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Quick.AspNetCore.Components.Web.Extensions" Version="6.0.2" />
     </ItemGroup>
 
     <ItemGroup>

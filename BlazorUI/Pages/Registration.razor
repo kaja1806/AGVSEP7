@@ -1,0 +1,96 @@
+@page "/Registration"
+@using global::Shared.Models
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+
+<div class="container mt-5">
+    <h3 class="mb-4">Registration</h3>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" id="email" class="form-control" @bind="email" />
+        <span class="text-danger">@errorMessage</span>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" class="form-control" @bind="password" />
+    </div>
+
+    <div class="mb-3">
+        <label for="firstName" class="form-label">First Name:</label>
+        <input type="text" id="firstName" class="form-control" @bind="firstName" />
+    </div>
+
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name:</label>
+        <input type="text" id="lastName" class="form-control" @bind="lastName" />
+    </div>
+
+    <div class="mb-3">
+        <label for="role" class="form-label">Role:</label>
+        <input type="text" id="role" class="form-control" @bind="role" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="Register">Register</button>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            @successMessage
+        </div>
+    }
+</div>
+
+@code {
+    private string email;
+    private string password;
+    private string firstName;
+    private string lastName;
+    private string role;
+    private string errorMessage;
+    private string successMessage;
+
+    private async Task Register()
+    {
+        try
+        {
+            // Validate email format
+            if (!email.EndsWith("@company.com"))
+            {
+                errorMessage = "Email must end with @company.com";
+                return;
+            }
+
+            // Create a UserModelDto
+            var userModelDto = new UserModelDto
+            {
+                Email = email,
+                Password = password,
+                FirstName = firstName,
+                LastName = lastName,
+                Role = role
+            };
+
+            // Send a POST request to the registration endpoint
+            var response = await httpClient.PostAsJsonAsync("api/User/RegisterUser", userModelDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Registration successful
+                successMessage = "Registration successful! Redirecting to login page...";
+                
+                // Redirect to login page after a short delay
+                navigationManager.NavigateTo("/Login");
+            }
+            else
+            {
+                errorMessage = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

@@ -1,6 +1,6 @@
-﻿@page "/ProductionScheduleReport"
+@page "/SustainabilityReport"
 
-<h1>Production Schedule Report</h1>
+<h1>Sustainability Report</h1>
 
 <ul class="month-list">
     @foreach (var month in Months)
@@ -13,16 +13,14 @@
     @if (!string.IsNullOrEmpty(SelectedReport))
     {
         <div class="report-content">
-            <h2>@SelectedMonth Production Schedule Report</h2>
+            <h2>@SelectedMonth Sustainability Report</h2>
             <p>@SelectedReport</p>
 
             <div class="report-details">
                 <ul>
-                    <li><strong>Planned Production Quantity:</strong> @GetRandomNumber(5, 20) units</li>
-                    <li><strong>Actual Production Quantity:</strong> @GetRandomNumber(3, 18) units</li>
-                    <li>
-                        <strong>Adjustments Made:</strong> @GetRandomNumber(0, 5)
-                    </li>
+                    <li><strong>Carbon Footprint:</strong> @GetRandomNumber(1, 5) tons CO2</li>
+                    <li><strong>Water Usage:</strong> @GetRandomNumber(20, 100) liters</li>
+                    <li><strong>ESG Score:</strong> @GetRandomNumber(70, 90)</li>
                 </ul>
             </div>
         </div>
@@ -30,8 +28,7 @@
 </div>
 
 @code {
-    // Dummy data for demonstration
-    private readonly List<string> Months = new() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    private readonly List<string> Months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
     private string SelectedMonth { get; set; }
     private string SelectedReport { get; set; }
@@ -39,14 +36,13 @@
     private void ShowReport(string month)
     {
         SelectedMonth = month;
-        SelectedReport = $"Production schedule details for {month}";
+        SelectedReport = $"Sustainability metrics for {month}";
     }
 
     private int GetRandomNumber(int min, int max)
     {
         return new Random().Next(min, max + 1);
     }
-
 }
 
 <style>
