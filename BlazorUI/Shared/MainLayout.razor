@@ -3,14 +3,16 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu/>
+        <NavMenu />
     </div>
 
     <main>
         <div class="top-row px-4">
             <button class="btn btn-link" @onclick="NavigateToRegistration">Register</button>
             <button class="btn btn-link" @onclick="NavigateToLogin">Login</button>
-            <button class="btn btn-link" @onclick="Logout">Logout</button>
+            @*
+            <button class="btn btn-link" @onclick="NavigateToWelcome">Logout</button>
+        *@
         </div>
 
         <article class="content px-4">
@@ -30,8 +32,8 @@
         NavigationManager.NavigateTo("/Login");
     }
 
-    private void Logout()
+    /*private void NavigateToWelcome()
     {
-    //  logout logic here
-    }
+        NavigationManager.NavigateTo("/Welcome");
+    }*/
 }

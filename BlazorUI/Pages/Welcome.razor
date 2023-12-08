@@ -1,0 +1,60 @@
+@page "/"
+
+@inject IJSRuntime JSRuntime
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        margin-top: 50px;
+    }
+
+    h2.text-center {
+        margin-bottom: 20px;
+        color: #007bff;
+    }
+
+    h3.text-center {
+        margin-top: 20px;
+        color: #6c757d;
+    }
+
+    h3.text-center span {
+        color: #007bff;
+    }
+
+    p.text-center {
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    .btn-container {
+        text-align: center;
+    }
+
+    .btn-container a.btn {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center">Production and Sustainability Overview</h2>
+    <h3 class="text-center">In order to see the production and sustainability overview, please log in.</h3>
+    <p class="text-center">If you don't have an account, you can register using your credidentials.</p>
+
+    <div class="btn-container">
+        <a class="btn btn-primary" href="/Login">Log In</a>
+        <a class="btn btn-success" href="/Registration">Register</a>
+    </div>
+</div>

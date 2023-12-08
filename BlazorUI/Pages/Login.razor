@@ -1,49 +1,166 @@
+@*
 @page "/Login"
-@inject NavigationManager NavigationManager
+@using global::Shared.Models
+@using System.Text.Json
+@inject HttpClient HttpClient
+@inject NavigationManager navigationManager
 
 <div class="container mt-5">
     <h3 class="mb-4">Login</h3>
 
     <div class="mb-3">
-        <label for="email" class="form-label">Email:</label>
+        <label for="email" class="form-label">Email: </label>
+        <input type="email" id="email" class="form-control" @bind="email"/>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" class="form-control" @bind="password"/>
+    </div>
+
+    <button class="btn btn-primary" @onclick="@LoginUser">Log in</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorMessage
+        </div>
+    }
+</div>
+
+@code{
+    private string email;
+    private string password;
+    private HttpResponseMessage _userResults;
+    private string errorMessage;
+    private string successMessage;
+
+    private async Task LoginUser()
+    {
+        try
+        {
+            // Validate email format
+            if (!email.EndsWith("@company.com"))
+            {
+                errorMessage = "Email must end with @company.com";
+                return;
+            }
+
+            var userModel = new UserModelDto
+            {
+                Email = email,
+                Password = password
+            };
+
+            _userResults = await HttpClient.PostAsJsonAsync($"api/User/login/{email},{password}", userModel);
+
+            if (_userResults.IsSuccessStatusCode)
+            {
+                
+                    var stream = await _userResults.Content.ReadAsStreamAsync();
+                var result = JsonSerializer.Deserialize<ApiResponseModel>(stream);
+                
+                successMessage = "Login successful! Redirecting to home page.";
+                errorMessage = ""; // Reset error message on success
+                navigationManager.NavigateTo("/Home");
+
+            }
+            else
+            {
+                errorMessage = await _userResults.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
+*@
+
+@page "/Login"
+@using global::Shared.Models
+@inject HttpClient HttpClient
+@inject NavigationManager NavMgr
+
+<div class="container mt-5">
+    <h3 class="mb-4">Login</h3>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email: </label>
         <input type="email" id="email" class="form-control" @bind="email" />
     </div>
 
     <div class="mb-3">
         <label for="password" class="form-label">Password:</label>
         <input type="password" id="password" class="form-control" @bind="password" />
-        <span class="text-danger">@errorMessage</span>
     </div>
 
-    <button class="btn btn-primary" @onclick="LoginUser">Log in</button>
+    <button class="btn btn-primary" @onclick="@LoginUser">Log in</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorMessage
+        </div>
+    }
+
+    @if (loginSuccess)
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            @successMessage
+        </div>
+    }
 </div>
 
 @code {
     private string email;
     private string password;
+    private HttpResponseMessage _userResults;
     private string errorMessage;
+    private string successMessage;
+    private bool loginSuccess;
 
     private async Task LoginUser()
     {
-        try
+        // Validate email and password
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
-    //   authentication logic should be added here
-            if (email == "user@company.com" && password == "password123")
+            errorMessage = "Email and password are required.";
+            return;
+        }
+
+        if (!email.EndsWith("@company.com"))
+        {
+            errorMessage = "Email must end with @company.com";
+            return;
+        }
+
+        var userModel = new UserModelDto
+        {
+            Email = email,
+            Password = password
+        };
+
+        _userResults = await HttpClient.PostAsJsonAsync("api/User/login", userModel);
+
+        if (_userResults.IsSuccessStatusCode)
+        {
+            loginSuccess = true;
+            successMessage = "Login successful! Redirecting to home page.";
+            await Task.Delay(200);
+            NavMgr.NavigateTo("/");
+        }
+        else
+        {
+            if (_userResults.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-    // successful login
-                errorMessage = string.Empty;
-                NavigationManager.NavigateTo("/"); // Redirect to the main page
+                errorMessage = "Incorrect email or password.";
             }
             else
             {
-    // invalid credentials
-                errorMessage = "Invalid email or password";
+                errorMessage = await _userResults.Content.ReadAsStringAsync();
             }
-        }
-        catch (Exception e)
-        {
-    //  other exceptions
-            errorMessage = $"Error: {e.Message}";
         }
     }
 }
