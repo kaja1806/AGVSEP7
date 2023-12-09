@@ -4,8 +4,7 @@ using Database.SQLHelper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Helpers;
 using Shared.Models;
-
-namespace WebAPI.Services;
+using WebAPI.Services;
 
 public class UserService : IUserService
 {
@@ -16,56 +15,50 @@ public class UserService : IUserService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-
     public async Task<string> CreateUser(UserModelDto userModelDto)
     {
-        var userExist = GetUser(userModelDto.Email);
+        var userExist = await GetUser(userModelDto.Email);
 
-        if (userExist.Result != null)
+        if (userExist != null)
         {
-            return $"User: {userExist.Result.Email} already exists";
+            return $"User: {userExist.Email} already exists";
         }
 
-        var hashPassword =
-            Hashing.HashString(userModelDto.Password);
-
+        var hashPassword = Hashing.HashString(userModelDto.Password);
         var registerUser = await RegisterUser(userModelDto, hashPassword);
+
         return registerUser;
     }
 
     public async Task<IActionResult> LoginUser(UserModelDto userModelDto)
     {
         var getUser = await GetUser(userModelDto.Email);
+
         if (getUser == null)
         {
             return new NotFoundObjectResult("User not found");
         }
 
-        if (getUser.Token != null)
-        {
-            await RemoveTokenFromUser(userModelDto.Email);
-        }
-
         bool validateLogin = await CheckPassword(userModelDto.Email, Hashing.HashString(userModelDto.Password));
+
         if (!validateLogin)
         {
             return new BadRequestObjectResult("Password incorrect!");
         }
 
         var token = Hashing.HashString(userModelDto.Email, DateTime.Now.ToString(CultureInfo.InvariantCulture));
-
-        //string token = Authorization.GenerateJwt(userModel); TODO figure how to make it work, if not use the token from above
         userModelDto.Token = token;
 
-        userModelDto.Token = token;
         await AddTokenToUser(userModelDto.Email, token);
+
         return new OkObjectResult("Login successful!");
     }
 
     public async Task<IActionResult> LogoutUser(string email)
     {
         var getUser = await GetUser(email);
-        if (getUser == null || getUser.Token == null)
+
+        if (getUser == null || string.IsNullOrEmpty(getUser.Token))
         {
             return new NotFoundObjectResult("User not logged in");
         }
@@ -74,7 +67,6 @@ public class UserService : IUserService
 
         return new OkObjectResult("Logged out");
     }
-
 
     private async Task<string> RegisterUser(UserModelDto userModelDto, string hashPassword)
     {
@@ -85,6 +77,7 @@ public class UserService : IUserService
 
             await using var connection = _sqlConnectionClass.GetConnection();
             connection.Query(query);
+
             return "User created!";
         }
         catch (Exception e)
@@ -96,7 +89,7 @@ public class UserService : IUserService
 
     private async Task<UserModelDto?> GetUser(string email)
     {
-        var query = $"SELECT Email,FirstName,LastName,Role,Token FROM Operator WHERE Email = '{email}'";
+        var query = $"SELECT Email, FirstName, LastName, Role, Token FROM Operator WHERE Email = '{email}'";
 
         await using var connection = _sqlConnectionClass.GetConnection();
         var userExist = connection.QuerySingleOrDefault<UserModelDto>(query);
@@ -107,17 +100,10 @@ public class UserService : IUserService
     private async Task<bool> CheckPassword(string email, string password)
     {
         await using var connection = _sqlConnectionClass.GetConnection();
-        var result =
-            connection.QueryFirstOrDefaultAsync<UserModelDto>(
-                $"SELECT 1 FROM Operator WHERE Email = '{email}' AND Password = '{password}' ").Result;
-        if (result == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        var result = await connection.QueryFirstOrDefaultAsync<UserModelDto>(
+            $"SELECT 1 FROM Operator WHERE Email = '{email}' AND Password = '{password}' ");
+
+        return result != null;
     }
 
     private async Task RemoveTokenFromUser(string email)
@@ -147,4 +133,6 @@ public class UserService : IUserService
             throw;
         }
     }
+    
 }
+

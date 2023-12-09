@@ -18,7 +18,6 @@ builder.Services.AddScoped<ISegmentService, SegmentService>();
 builder.Services.AddScoped<ICalculationResultService, CalculationResultService>();
 builder.Services.AddScoped<IAgvService, AgvService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddSingleton<UserService>();
 
 
 builder.Services.AddControllers();

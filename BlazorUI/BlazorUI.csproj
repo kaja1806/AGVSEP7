@@ -21,8 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Pages\Home.css">
-        <DependentUpon>Home.razor</DependentUpon>
+      <None Update="Pages\Welcome.css">
+        <DependentUpon>Welcome.razor</DependentUpon>
       </None>
     </ItemGroup>
 
@@ -31,6 +31,9 @@
         <DependentUpon>Reports.razor</DependentUpon>
       </Content>
       <Content Update="Pages\ProductionScheduleReport.razor">
+        <DependentUpon>Reports.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\SustainabilityReport.razor">
         <DependentUpon>Reports.razor</DependentUpon>
       </Content>
     </ItemGroup>
