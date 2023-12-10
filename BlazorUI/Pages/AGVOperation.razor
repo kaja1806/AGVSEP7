@@ -1,52 +1,10 @@
 @page "/AGVOperation"
+@using AGV.Services
+@using AGV.Models
+@inject IAGVSimulationService _simulationService
 
 <div class="container mt-4 text-center">
     <h3 class="text-center">AGV Operation</h3>
-</div>
-
-
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">AGV Status</h5>
-
-                    <p>AGV ID: </p>
-                    <p>Status: </p>
-                    <p>PositionX: </p>
-                    <p>PositionY: </p>
-                    <p>PositionZ: </p>
-                    <p>Timestamp: </p>
-
-                    @*
-                    <p>AGV ID: @model.AGVId</p>
-                    <p>Status: @GetStatusString(model.Status)</p>
-                    <p>Location: @model.Location</p>
-                    <p>Timestamp: @model.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</p>
-                    *@
-
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Coordinates</h5>
-
-                    <p>X: </p>
-                    <p>Y: </p>
-                    <p>Z: </p>
-
-                    @*<p>X: @model.Coordinates.LocationX</p>
-                    <p>Y: @model.Coordinates.LocationY</p>
-                    <p>Z: @model.Coordinates.LocationZ</p>*@
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="container mt-4">
@@ -57,7 +15,34 @@
 
         <div class="card mt-3 card-no-border">
             <div class="card-body center-card-content">
-                <button class="btn btn-primary">Activate </button>
+                <button @onclick="StartSimulation" class="btn btn-primary">Activate </button>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <div class="card">
+                <div class="card-body agv-table">
+                    <h5 class="card-title">Activity Log</h5>
+                    <table class="table" style="height: 300px;">
+                        <thead>
+                        <tr>
+                            <th>Segment No</th>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var movement in _simulatedMovements)
+                        {
+                            <tr>
+                                <td>@movement.SegmentNo</td>
+                                <td>@movement.Action</td>
+                                <td>@movement.AddedAt</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -70,35 +55,31 @@
     </div>
 </div>
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Activity Log</h5>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Activity</th>
-                    <th>Timestamp</th>
-                </tr>
-                </thead>
-                <tbody>
-                @*@foreach (var activity in activityLog)*@
-                @*{*@
-                <tr>
-                    <td>Activity</td>
-                    <td>Timestamp</td>
-
-                    @*<td>@activity.Activity</td>
-                                    <td>@activity.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>*@
-                </tr>
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
 
 @code {
+    private List<AgvModel> _simulatedMovements = new();
+    private Guid statorId = new Guid("2FC50961-6F76-4820-A983-A6613A056404");
+
+    protected override void OnInitialized()
+    {
+        _simulationService.StepCompleted += OnStepCompleted;
+    }
+
+    private void OnStepCompleted(object sender, AgvModel step)
+    {
+        _simulatedMovements.Add(step);
+        StateHasChanged();
+    }
+
+    private async Task StartSimulation()
+    {
+        StateHasChanged();
+
+        // Call the simulation service to start the AGV movement simulation
+        await _simulationService.SimulateSegmentMovement(statorId);
+
+        // Retrieve the simulated movements after simulation completes
+        _simulatedMovements = await _simulationService.GetSimulatedMovements();
+    }
 
 }

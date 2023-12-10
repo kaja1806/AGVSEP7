@@ -1,9 +1,9 @@
-@*
 @page "/Login"
 @using global::Shared.Models
 @using System.Text.Json
 @inject HttpClient HttpClient
-@inject NavigationManager navigationManager
+@inject NavigationManager NavMgr
+@inject IJSRuntime JSRuntime
 
 <div class="container mt-5">
     <h3 class="mb-4">Login</h3>
@@ -16,84 +16,6 @@
     <div class="mb-3">
         <label for="password" class="form-label">Password:</label>
         <input type="password" id="password" class="form-control" @bind="password"/>
-    </div>
-
-    <button class="btn btn-primary" @onclick="@LoginUser">Log in</button>
-
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger mt-3" role="alert">
-            @errorMessage
-        </div>
-    }
-</div>
-
-@code{
-    private string email;
-    private string password;
-    private HttpResponseMessage _userResults;
-    private string errorMessage;
-    private string successMessage;
-
-    private async Task LoginUser()
-    {
-        try
-        {
-            // Validate email format
-            if (!email.EndsWith("@company.com"))
-            {
-                errorMessage = "Email must end with @company.com";
-                return;
-            }
-
-            var userModel = new UserModelDto
-            {
-                Email = email,
-                Password = password
-            };
-
-            _userResults = await HttpClient.PostAsJsonAsync($"api/User/login/{email},{password}", userModel);
-
-            if (_userResults.IsSuccessStatusCode)
-            {
-                
-                    var stream = await _userResults.Content.ReadAsStreamAsync();
-                var result = JsonSerializer.Deserialize<ApiResponseModel>(stream);
-                
-                successMessage = "Login successful! Redirecting to home page.";
-                errorMessage = ""; // Reset error message on success
-                navigationManager.NavigateTo("/Home");
-
-            }
-            else
-            {
-                errorMessage = await _userResults.Content.ReadAsStringAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = ex.Message;
-        }
-    }
-}
-*@
-
-@page "/Login"
-@using global::Shared.Models
-@inject HttpClient HttpClient
-@inject NavigationManager NavMgr
-
-<div class="container mt-5">
-    <h3 class="mb-4">Login</h3>
-
-    <div class="mb-3">
-        <label for="email" class="form-label">Email: </label>
-        <input type="email" id="email" class="form-control" @bind="email" />
-    </div>
-
-    <div class="mb-3">
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" id="password" class="form-control" @bind="password" />
     </div>
 
     <button class="btn btn-primary" @onclick="@LoginUser">Log in</button>
@@ -142,24 +64,36 @@
             Password = password
         };
 
-        _userResults = await HttpClient.PostAsJsonAsync("api/User/login", userModel);
+        _userResults = await HttpClient.PostAsJsonAsync($"api/User/login/{email},{password}", userModel);
 
         if (_userResults.IsSuccessStatusCode)
         {
-            loginSuccess = true;
-            successMessage = "Login successful! Redirecting to home page.";
-            await Task.Delay(200);
-            NavMgr.NavigateTo("/");
+            var jsonResponse = await _userResults.Content.ReadAsStringAsync();
+            ApiResponseModel result = JsonSerializer.Deserialize<ApiResponseModel>(jsonResponse);
+
+            if (result.StatusCode == 200)
+            {
+                successMessage = result.Value;
+                await JSRuntime.InvokeVoidAsync("alert", successMessage);
+            }
+
+            if (result.StatusCode == 404)
+            {
+                errorMessage = result.Value;
+                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
+            }
         }
         else
         {
             if (_userResults.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 errorMessage = "Incorrect email or password.";
+                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
             }
             else
             {
                 errorMessage = await _userResults.Content.ReadAsStringAsync();
+                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
             }
         }
     }

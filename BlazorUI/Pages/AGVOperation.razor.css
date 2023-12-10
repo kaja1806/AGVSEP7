@@ -1,4 +1,3 @@
-
 body {
     background-color: #f8f9fa; /* Set the background color */
     padding: 20px; /* Add padding to the body */
@@ -29,6 +28,10 @@ body {
 
 .card-body {
     padding: 20px; /* Add padding to the card body */
+}
+.card-body.agv-table{
+    height: 300px;
+    overflow: auto;
 }
 
 .btn-center {
