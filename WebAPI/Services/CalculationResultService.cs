@@ -14,7 +14,7 @@ public class CalculationResultService : ICalculationResultService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-    private async Task<List<CalculationResultModel>> GetCalculationsFromDb(string? statorNo)
+    private async Task<List<CalculationResultModel>> GetCalculationsFromDb(int? statorNo)
     {
         string? condition = null;
         if (statorNo != null)
@@ -23,7 +23,7 @@ public class CalculationResultService : ICalculationResultService
         }
 
         string query =
-            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, ST.StatorNo from CalculationResult CR " +
+            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, Deviation, Adjustment, ST.StatorNo from CalculationResult CR " +
             $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
             $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
         await using var connection = _sqlConnectionClass.GetConnection();
@@ -33,7 +33,7 @@ public class CalculationResultService : ICalculationResultService
         return result;
     }
 
-    public async Task<List<AdjustedCalculationDto>> GetCalculationResult(string? statorNo)
+    public async Task<List<AdjustedCalculationDto>> GetCalculationResult(int? statorNo)
     {
         var calculationResult = await GetCalculationsFromDb(statorNo);
         var adjustedCalcList = new List<AdjustedCalculationDto>();
@@ -57,7 +57,7 @@ public class CalculationResultService : ICalculationResultService
     }
 
 
-    public async Task<string> SetCalculationResult(string statorNo)
+    public async Task<string> RunCalculationForSegment(int statorNo)
     {
         try
         {
@@ -77,8 +77,8 @@ public class CalculationResultService : ICalculationResultService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            // You might want to return a more specific error message depending on your requirements
+            return $"An unexpected error occurred: {e.Message}";
         }
     }
 }

@@ -75,6 +75,7 @@
             {
                 successMessage = result.Value;
                 await JSRuntime.InvokeVoidAsync("alert", successMessage);
+                NavMgr.NavigateTo("/");
             }
 
             if (result.StatusCode == 404)

@@ -6,11 +6,19 @@
 <div class="card">
     <h3>Automated Quality Analysis and Adjustments</h3>
 
+    <!-- Loading spinner -->
+    @if (IsLoading)
+    {
+        <div class="loading-spinner">
+            <div class="spinner-border" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
+    }
+
     <h3>Measurement Data</h3>
 
-    <button class="btn btn-primary" @onclick="RefreshData">Refresh</button>
-
-    <table class="adjustment-table">
+    <table class="adjustment-table" style="@GetTableStyle()">
         <thead>
         <tr>
             <th>Date</th>
@@ -32,10 +40,10 @@
                     <td>@measurement.MeasuredValue.ToString("F2")</td>
                     <td>@measurement.Tolerance.ToString("F2")</td>
                     <td>@measurement.Deviation.ToString()</td>
-                    <td style="@GetAdjustmentStyle(measurement)">
+                    <td style="@GetAdjustmentStyle(measurement.AdjustmentNeeded)">
                         @if (measurement.AdjustmentNeeded != null)
                         {
-                            @((measurement.AdjustmentNeeded == true) ? "Yes" : "No")
+                            @((bool)measurement.AdjustmentNeeded ? "Yes" : "No")
                         }
                         else
                         {
@@ -50,8 +58,31 @@
         </tbody>
     </table>
 </div>
+
+<div class="calculation-section">
+    <input type="text" @bind="statorNo" placeholder="Enter SegmentNo"/>
+    <button class="btn btn-primary" @onclick="RunCalculation" disabled="@(_calculationResults == null || statorNo == 0)">Run calculation</button>
+
+    @if (_calculationResults != null)
+    {
+        <!-- Display calculation results here -->
+    }
+    else
+    {
+        @if (statorNo != 0)
+        {
+            <div>
+                <text>Calculation needed for SegmentNo: @statorNo</text>
+                <button class="btn btn-primary" @onclick="RunCalculation">Run calculation</button>
+            </div>
+        }
+    }
+</div>
+
 @code {
     private List<AdjustedCalculationDto>? _calculationResults;
+    private int statorNo;
+    private bool IsLoading { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,21 +91,46 @@
 
     private async Task GetCalculationResult()
     {
-        _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetAllCalculationResults") ?? throw new InvalidOperationException();
+        IsLoading = true; // Set loading state to true before making the API call
+        _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetCalculationResult") ?? throw new InvalidOperationException();
+        IsLoading = false; // Set loading state to false after the API call is complete
     }
 
-    private async Task RefreshData()
+    private async Task RunCalculation()
     {
-        await GetCalculationResult();
-        StateHasChanged(); // Trigger UI update
+        IsLoading = true; // Set loading state to true before making the API call
+        var result = await HttpClient.PostAsJsonAsync($"api/controller/RunCalculationForSegment/{statorNo}", statorNo) ?? throw new InvalidOperationException();
+        var jsonResponse = await result.Content.ReadAsStringAsync();
+
+        if (result.IsSuccessStatusCode)
+        {
+            await GetCalculationResult();
+        }
+        else
+        {
+        }
+
+        IsLoading = false; // Set loading state to false after the API call is complete
     }
 
-    private string GetAdjustmentStyle(AdjustedCalculationDto measurement)
+    private string GetAdjustmentStyle(bool? columnColor)
     {
-        // Apply background colors to the cell based on Adjustment Needed
-        return measurement.AdjustmentNeeded != null
-            ? "background-color: #f2dede;" // Light red background
-            : "background-color: #dff0d8;"; // Light green background
+        if (columnColor == null)
+        {
+            return "background-color: #f2dede;";
+        }
+        else
+        {
+            return columnColor == true
+                ? "background-color: #f2dede;" // Light red background
+                : "background-color: #dff0d8;"; // Light green background
+        }
+    }
+
+    private string GetTableStyle()
+    {
+        // Adjust the style to grey out the table when loading
+        return IsLoading ? "opacity: 0.5;" : "";
     }
 
 }
