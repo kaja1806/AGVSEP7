@@ -28,11 +28,20 @@
             @foreach (var measurement in _calculationResults)
             {
                 <tr>
-                    <td>@measurement.Date.ToShortDateString()</td>
+                    <td>@measurement.Date</td>
                     <td>@measurement.MeasuredValue.ToString("F2")</td>
                     <td>@measurement.Tolerance.ToString("F2")</td>
-                    <td>@measurement.Deviation.ToString("F2")</td>
-                    <td style="@GetAdjustmentStyle(measurement)">@((measurement.AdjustmentNeeded ? "Yes" : "No"))</td>
+                    <td>@measurement.Deviation.ToString()</td>
+                    <td style="@GetAdjustmentStyle(measurement)">
+                        @if (measurement.AdjustmentNeeded != null)
+                        {
+                            @((measurement.AdjustmentNeeded == true) ? "Yes" : "No")
+                        }
+                        else
+                        {
+                            <text>Run Calculation</text>
+                        }
+                    </td>
                     <td>@measurement.SegmentNo.ToString("F1")</td>
                     <td>@measurement.StatorNo</td>
                 </tr>
@@ -41,7 +50,6 @@
         </tbody>
     </table>
 </div>
-
 @code {
     private List<AdjustedCalculationDto>? _calculationResults;
 
@@ -63,8 +71,8 @@
 
     private string GetAdjustmentStyle(AdjustedCalculationDto measurement)
     {
-    // Apply background colors to the cell based on Adjustment Needed
-        return measurement.AdjustmentNeeded
+        // Apply background colors to the cell based on Adjustment Needed
+        return measurement.AdjustmentNeeded != null
             ? "background-color: #f2dede;" // Light red background
             : "background-color: #dff0d8;"; // Light green background
     }

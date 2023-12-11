@@ -14,7 +14,7 @@ public class CalculationResultService : ICalculationResultService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-    public async Task<List<CalculationResultModel>> GetCalculationsFromDb(string? statorNo)
+    private async Task<List<CalculationResultModel>> GetCalculationsFromDb(string? statorNo)
     {
         string? condition = null;
         if (statorNo != null)
@@ -26,7 +26,7 @@ public class CalculationResultService : ICalculationResultService
             $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, ST.StatorNo from CalculationResult CR " +
             $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
             $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
-        using var connection = _sqlConnectionClass.GetConnection();
+        await using var connection = _sqlConnectionClass.GetConnection();
 
         var result = connection
             .Query<CalculationResultModel>(query).ToList();
@@ -40,15 +40,13 @@ public class CalculationResultService : ICalculationResultService
 
         foreach (var calculationResults in calculationResult)
         {
-            var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) < 0.4;
-
             var adjustedCalcDto = new AdjustedCalculationDto()
             {
                 Date = calculationResults.Date,
                 Tolerance = calculationResults.Tolerance,
                 MeasuredValue = calculationResults.MeasuredValue,
-                Deviation = calculationResults.MeasuredValue - calculationResults.Tolerance,
-                AdjustmentNeeded = toleranceBool,
+                Deviation = calculationResults.Deviation,
+                AdjustmentNeeded = calculationResults.Adjustment,
                 SegmentNo = calculationResults.SegmentNo,
                 StatorNo = calculationResults.StatorNo
             };
@@ -65,19 +63,17 @@ public class CalculationResultService : ICalculationResultService
         {
             var calculationResult = await GetCalculationsFromDb(statorNo);
 
-            await using (var connection = _sqlConnectionClass.GetConnection())
+            await using var connection = _sqlConnectionClass.GetConnection();
+            foreach (var calculationResults in calculationResult)
             {
-                foreach (var calculationResults in calculationResult)
-                {
-                    var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) > 0.4;
+                var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) > 0.4;
 
-                    string query =
-                        $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";
-                    await connection.ExecuteAsync(query);
-                }
-
-                return $"Table edited successfully";
+                string query =
+                    $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";
+                await connection.ExecuteAsync(query);
             }
+
+            return $"Table edited successfully";
         }
         catch (Exception e)
         {

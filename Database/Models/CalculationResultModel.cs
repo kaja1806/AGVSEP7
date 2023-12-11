@@ -9,7 +9,7 @@ public class CalculationResultModel
     public string StatorNo { get; set; }
     public double MeasuredValue { get; set; }
     public double Tolerance { get; set; }
-    public double Deviation { get; set; }
+    public double? Deviation { get; set; }
     public DateTime Date { get; set; }
-    public bool Adjustment { get; set; }
+    public bool? Adjustment { get; set; }
 }

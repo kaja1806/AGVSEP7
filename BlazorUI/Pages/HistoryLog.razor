@@ -64,11 +64,20 @@
                         @foreach (var measurement in _calculationResults)
                         {
                             <tr>
-                                <td>@measurement.Date.ToShortDateString()</td>
+                                <td>@measurement.Date</td>
                                 <td>@measurement.MeasuredValue.ToString("F2")</td>
                                 <td>@measurement.Tolerance.ToString("F2")</td>
-                                <td>@measurement.Deviation.ToString("F2")</td>
-                                <td>@(measurement.AdjustmentNeeded ? "Yes" : "No")</td>
+                                <td>@measurement.Deviation.ToString()</td>
+                                <td>
+                                    @if (measurement.AdjustmentNeeded != null)
+                                    {
+                                        @((measurement.AdjustmentNeeded == true) ? "Yes" : "No")
+                                    }
+                                    else
+                                    {
+                                        <text>Run Calculation</text>
+                                    }
+                                </td>
                                 <td>@measurement.SegmentNo.ToString("F1")</td>
                                 <td>@measurement.StatorNo</td>
                             </tr>
@@ -130,6 +139,3 @@
     }
 
 }
-
-
-
