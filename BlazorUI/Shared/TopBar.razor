@@ -1,0 +1,63 @@
+﻿@using global::Shared.Services
+@inject AuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+
+
+<div class="top-row px-4">
+    @if (AuthenticationService.IsLoggedIn)
+    {
+        <span class="top-link">@AuthenticationService.UserName</span>
+        <button class="btn btn-link" @onclick="LogoutAsync">Logout</button>
+    }
+    else
+    {
+        <button class="btn btn-link" @onclick="NavigateToRegistration">Register</button>
+        <button class="btn btn-link" @onclick="NavigateToLogin">Login</button>
+    }
+</div>
+
+@code {
+
+    private async Task LogoutAsync()
+    {
+        var response = await HttpClient.PostAsJsonAsync($"api/User/logout/{AuthenticationService.UserName}", AuthenticationService.UserName);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Call the Logout method in the AuthenticationService
+            AuthenticationService.Logout();
+            NavigationManager.NavigateTo("/Login");
+        }
+    }
+
+    private void NavigateToRegistration()
+    {
+        NavigationManager.NavigateTo("/Registration");
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+
+    // Subscribe to the OnChange event when the component initializes
+    protected override void OnInitialized()
+    {
+        AuthenticationService.OnAuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    // Unsubscribe when the component is disposed
+    public void Dispose()
+    {
+        AuthenticationService.OnAuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+
+    // Method to execute when the authentication state changes
+    private void OnAuthenticationStateChanged()
+    {
+        // Force the component to re-render when the authentication state changes
+        StateHasChanged();
+    }
+
+}

@@ -32,13 +32,6 @@ public class UserService : IUserService
 
     public async Task<IActionResult> LoginUser(UserModelDto userModelDto)
     {
-        var getUser = await GetUser(userModelDto.Email);
-
-        if (getUser == null)
-        {
-            return new NotFoundObjectResult("User not found");
-        }
-
         bool validateLogin = await CheckPassword(userModelDto.Email, Hashing.HashString(userModelDto.Password));
 
         if (!validateLogin)
@@ -87,7 +80,7 @@ public class UserService : IUserService
         }
     }
 
-    private async Task<UserModelDto?> GetUser(string email)
+    public async Task<UserModelDto?> GetUser(string email)
     {
         var query = $"SELECT Email, FirstName, LastName, Role, Token FROM Operator WHERE Email = '{email}'";
 
@@ -133,6 +126,4 @@ public class UserService : IUserService
             throw;
         }
     }
-    
 }
-

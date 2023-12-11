@@ -41,6 +41,18 @@ public class UserController : ControllerBase
                 Password = password
             };
 
+            var getUser = await _userService.GetUser(email);
+
+            if (getUser == null)
+            {
+                return new NotFoundObjectResult("User not found");
+            }
+
+            if (getUser.Token != null)
+            {
+                return new BadRequestObjectResult("User already logged in!");
+            }
+
             var result = await _userService.LoginUser(userModel);
             return Ok(result);
         }

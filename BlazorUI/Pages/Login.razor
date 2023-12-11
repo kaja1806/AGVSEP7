@@ -1,9 +1,12 @@
 @page "/Login"
 @using global::Shared.Models
 @using System.Text.Json
+@using System.Net
+@using global::Shared.Services
 @inject HttpClient HttpClient
 @inject NavigationManager NavMgr
-@inject IJSRuntime JSRuntime
+@inject AuthenticationService AuthService
+
 
 <div class="container mt-5">
     <h3 class="mb-4">Login</h3>
@@ -71,30 +74,28 @@
             var jsonResponse = await _userResults.Content.ReadAsStringAsync();
             ApiResponseModel result = JsonSerializer.Deserialize<ApiResponseModel>(jsonResponse);
 
-            if (result.StatusCode == 200)
+            if (_userResults.StatusCode == HttpStatusCode.OK)
             {
                 successMessage = result.Value;
-                await JSRuntime.InvokeVoidAsync("alert", successMessage);
                 NavMgr.NavigateTo("/");
+                // Set the user's name after successful login using the authentication service
+                AuthService.SetAuthenticatedUser(email);
             }
 
             if (result.StatusCode == 404)
             {
                 errorMessage = result.Value;
-                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
             }
         }
         else
         {
-            if (_userResults.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            if (_userResults.StatusCode == HttpStatusCode.Unauthorized)
             {
                 errorMessage = "Incorrect email or password.";
-                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
             }
             else
             {
                 errorMessage = await _userResults.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
             }
         }
     }

@@ -1,5 +1,5 @@
-﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+﻿<!-- MainLayout.razor -->
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -7,33 +7,9 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <button class="btn btn-link" @onclick="NavigateToRegistration">Register</button>
-            <button class="btn btn-link" @onclick="NavigateToLogin">Login</button>
-            @*
-            <button class="btn btn-link" @onclick="NavigateToWelcome">Logout</button>
-        *@
-        </div>
-
+        <TopBar />
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
-
-@code {
-    private void NavigateToRegistration()
-    {
-        NavigationManager.NavigateTo("/Registration");
-    }
-
-    private void NavigateToLogin()
-    {
-        NavigationManager.NavigateTo("/Login");
-    }
-
-    /*private void NavigateToWelcome()
-    {
-        NavigationManager.NavigateTo("/Welcome");
-    }*/
-}

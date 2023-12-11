@@ -2,11 +2,15 @@ using AGV.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorUI;
+using Shared.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped<IAGVSimulationService, AGVSimulationService>();
+builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<EventService>();
+
 
 builder.Services.AddScoped(sp =>
     new HttpClient
