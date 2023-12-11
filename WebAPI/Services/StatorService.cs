@@ -14,11 +14,28 @@ public class StatorService : IStatorService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-    public async Task<List<StatorModel>> GetStatorDb()
+    private async Task<List<StatorModel>> GetStatorDb()
     {
         await using var connection = _sqlConnectionClass.GetConnection();
         List<StatorModel> result = connection.Query<StatorModel>(@"SELECT * FROM Stator").ToList();
         return result;
+    }
+
+    public async Task<bool> SetNewStator(StatorDto statorDto)
+    {
+        try
+        {
+            await using var connection = _sqlConnectionClass.GetConnection();
+            var query =
+                $"INSERT INTO Stator(Name, StatorNo, ProductionOrder, MeasurementNo, Operator, Date, StatorTemp)" +
+                $"VALUES ('{statorDto.Name}', {statorDto.StatorNo}, {statorDto.ProductionOrder}, {statorDto.MeasurementNo},'{statorDto.Operator}', '{statorDto.Date}', {statorDto.StatorTemp})";
+            await connection.QuerySingleOrDefaultAsync(query);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     public async Task<List<StatorDto>> GetStator()
@@ -35,9 +52,8 @@ public class StatorService : IStatorService
                 ProductionOrder = statorResults.ProductionOrder,
                 Operator = statorResults.Operator,
                 Date = statorResults.Date,
-                NdeRadius = statorResults.NdeRadius,
-                MidRadius = statorResults.MidRadius,
-                DeRadius = statorResults.DeRadius,
+                MeasurementNo = statorResults.MeasurementNo,
+                StatorTemp = statorResults.StatorTemp
             };
             statorList.Add(statorDto);
         }

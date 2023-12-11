@@ -7,7 +7,6 @@ public class StatorDto
     public string ProductionOrder { get; set; }
     public string Operator { get; set; }
     public DateTime Date { get; set; }
-    public decimal NdeRadius { get; set; }
-    public decimal MidRadius { get; set; }
-    public decimal DeRadius { get; set; }
+    public int MeasurementNo { get; set; }
+    public double StatorTemp { get; set; }
 }

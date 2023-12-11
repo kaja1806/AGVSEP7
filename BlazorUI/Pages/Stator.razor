@@ -1,0 +1,137 @@
+﻿@page "/Stator"
+@using global::Shared.Models
+@inject HttpClient HttpClient
+
+
+<h3>Add new stator</h3>
+
+<EditForm Model="@formData" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <InputText id="Name" @bind-Value="formData.Name" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label for="StatorNo">Stator Number:</label>
+        <InputText id="StatorNo" @bind-Value="formData.StatorNo" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label for="ProductionOrder">Production Order:</label>
+        <InputText id="ProductionOrder" @bind-Value="formData.ProductionOrder" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label for="Operator">Operator:</label>
+        <InputText id="Operator" @bind-Value="formData.Operator" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label for="Date">Date:</label>
+        <InputDate id="Date" @bind-Value="formData.Date" class="form-control"/>
+    </div>
+
+    <div class="form-group">
+        <label for="MeasurementNo">MeasurmentNo:</label>
+        <InputNumber id="MeasurementNo" @bind-Value="formData.MeasurementNo" class="form-control"></InputNumber>
+    </div>
+
+    <div class="form-group">
+        <label for="StatorTemp">Stator Temp:</label>
+        <InputNumber id="StatorTemp" @bind-Value="formData.StatorTemp" class="form-control"/>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="form-group">
+        <InputText id="ApiResponse" @bind-Value="apiResponseMessage" class="form-control" readonly/>
+    </div>
+
+</EditForm>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Stator Number</th>
+        <th>Production Order</th>
+        <th>Operator</th>
+        <th>Date</th>
+        <th>MeasurementNo</th>
+        <th>StatorNo</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_stators != null)
+    {
+        @foreach (var data in _stators)
+        {
+            <tr>
+                <td>@data.Name</td>
+                <td>@data.StatorNo</td>
+                <td>@data.ProductionOrder</td>
+                <td>@data.Operator</td>
+                <td>@data.Date.ToShortDateString()</td>
+                <td>@data.MeasurementNo</td>
+                <td>@data.StatorNo</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+
+@code {
+    private StatorDto formData = new();
+    private List<StatorDto> dataList = new();
+    private bool submitted;
+    private string apiResponseMessage;
+    private List<StatorDto>? _stators;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        formData.Date = DateTime.Now;
+        await GetAllStators();
+    }
+
+    private async Task GetAllStators()
+    {
+        _stators = await HttpClient.GetFromJsonAsync<List<StatorDto>>($"api/Stator/GetStator") ?? throw new InvalidOperationException();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        dataList.Add(new StatorDto
+        {
+            Name = formData.Name,
+            StatorNo = formData.StatorNo,
+            ProductionOrder = formData.ProductionOrder,
+            Operator = formData.Operator,
+            Date = formData.Date,
+            MeasurementNo = formData.MeasurementNo,
+            StatorTemp = formData.StatorTemp
+        });
+
+        // Make an HTTP POST request to your endpoint
+        var response = await HttpClient.PostAsJsonAsync("api/Stator/SetStator", formData);
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            submitted = true;
+            apiResponseMessage = jsonResponse;
+            formData = new StatorDto(); // Reset the form
+            await GetAllStators();
+        }
+        else
+        {
+            apiResponseMessage = jsonResponse; // Display the error message
+        }
+    }
+
+}
