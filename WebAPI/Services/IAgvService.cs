@@ -4,5 +4,5 @@ namespace WebAPI.Controllers;
 
 internal interface IAgvService
 {
-    Task<string> SaveAgvStatusLogs(string statorId, List<AgvStatusModel> logEntries);
+    Task<string> SaveAgvStatusLogs(List<AgvStatusModel> agvStatus);
 }

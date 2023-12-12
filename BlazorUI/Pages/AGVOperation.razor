@@ -1,6 +1,6 @@
 @page "/AGVOperation"
 @using AGV.Services
-@using AGV.Models
+@using global::Shared.Models
 @inject IAGVSimulationService _simulationService
 
 <div class="container mt-4 text-center">
@@ -57,15 +57,15 @@
 
 
 @code {
-    private List<AgvModel> _simulatedMovements = new();
-    private Guid statorId = new Guid("2FC50961-6F76-4820-A983-A6613A056404");
+    private List<AgvStatusModel> _simulatedMovements = new();
+    private Guid statorId = new Guid("947177F6-EB1C-4356-A165-7A648F726E67");
 
     protected override void OnInitialized()
     {
         _simulationService.StepCompleted += OnStepCompleted;
     }
 
-    private void OnStepCompleted(object sender, AgvModel step)
+    private void OnStepCompleted(object sender, AgvStatusModel step)
     {
         _simulatedMovements.Add(step);
         StateHasChanged();

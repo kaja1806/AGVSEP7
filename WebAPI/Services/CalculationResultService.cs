@@ -66,7 +66,7 @@ public class CalculationResultService : ICalculationResultService
             await using var connection = _sqlConnectionClass.GetConnection();
             foreach (var calculationResults in calculationResult)
             {
-                var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) > 0.4;
+                var toleranceBool = Math.Abs(calculationResults.MeasuredValue - calculationResults.Tolerance) > 0.4m;
 
                 string query =
                     $"UPDATE CalculationResult SET Deviation = {calculationResults.MeasuredValue - calculationResults.Tolerance}, Adjustment = '{toleranceBool}' WHERE SegmentId = '{calculationResults.SegmentId}'";

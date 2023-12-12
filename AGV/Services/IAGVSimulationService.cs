@@ -1,14 +1,13 @@
-using AGV.Models;
 using Shared.Models;
 
 namespace AGV.Services;
 
 public interface IAGVSimulationService {
 
-    event EventHandler<AgvModel> StepCompleted;
+    event EventHandler<AgvStatusModel> StepCompleted;
 
     Task SimulateSegmentMovement(Guid statorId);
-    Task<List<AgvModel>> GetSimulatedMovements(); // Add this method
+    Task<List<AgvStatusModel>> GetSimulatedMovements(); // Add this method
     Task<List<SegmentDto>> GetSegmentDetails(Guid statorId);
 
 }

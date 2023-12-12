@@ -1,5 +1,4 @@
-﻿using AGV.Helpers;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 
 namespace WebAPI.Controllers;
@@ -11,12 +10,9 @@ public class AgvController : ControllerBase
     private IAgvService _agvService;
 
     [HttpPost("SaveAgvStatusLogs/{statorId}")]
-    public async Task<IActionResult> SaveAgvStatusLogs(string statorId, [FromBody] string logJson)
+    public async Task<IActionResult> SaveAgvStatusLogs([FromBody] List<AgvStatusModel> agvStatus)
     {
-        // Deserialize the JSON log
-        var logEntries = JsonHelper.DeserializeObject<List<AgvStatusModel>>(logJson);
-        
-        var result = await _agvService.SaveAgvStatusLogs(statorId,logEntries);
+        var result = await _agvService.SaveAgvStatusLogs(agvStatus);
         return Ok(result);
     }
 

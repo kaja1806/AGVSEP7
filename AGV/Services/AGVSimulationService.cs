@@ -1,17 +1,15 @@
 using System.Net.Http.Json;
-using System.Text.Json;
-using AGV.Models;
 using Shared.Models;
 
 namespace AGV.Services;
 
-public class AGVSimulationService : IAGVSimulationService {
-    private readonly List<AgvModel> _agvMovement = new();
-    private readonly string _logFilePath = "AGVLogs.json";
+public class AGVSimulationService : IAGVSimulationService
+{
+    private readonly List<AgvStatusModel> _agvMovement = new();
     private readonly HttpClient _httpClient;
-    public event EventHandler<AgvModel> StepCompleted;
+    public event EventHandler<AgvStatusModel> StepCompleted;
 
-    private void OnStepCompleted(AgvModel step)
+    private void OnStepCompleted(AgvStatusModel step)
     {
         StepCompleted?.Invoke(this, step);
     }
@@ -36,7 +34,7 @@ public class AGVSimulationService : IAGVSimulationService {
         }
     }
 
-    public Task<List<AgvModel>> GetSimulatedMovements()
+    public Task<List<AgvStatusModel>> GetSimulatedMovements()
     {
         return Task.FromResult(_agvMovement.ToList()); // Return a copy of the list
     }
@@ -50,7 +48,7 @@ public class AGVSimulationService : IAGVSimulationService {
             // Simulate forklift movement using fetched pallet details
             foreach (var palletDetail in palletDetails)
             {
-                var pickupAction = new AgvModel
+                var pickupAction = new AgvStatusModel
                 {
                     SegmentNo = palletDetail.SegmentNo,
                     Coordinates = palletDetail.SegmentCoordinates,
@@ -62,10 +60,10 @@ public class AGVSimulationService : IAGVSimulationService {
                 OnStepCompleted(pickupAction);
                 await Task.Delay(5000); // Simulate a delay of 5 seconds
 
-                var dropOffAction = new AgvModel
+                var dropOffAction = new AgvStatusModel
                 {
                     SegmentNo = palletDetail.SegmentNo,
-                    Coordinates = palletDetail.SegmentCoordinates, // You might want to adjust this based on your logic
+                    Coordinates = palletDetail.SegmentCoordinates,
                     Action = "DropOff",
                     AddedAt = DateTime.Now
                 };
@@ -74,10 +72,6 @@ public class AGVSimulationService : IAGVSimulationService {
                 OnStepCompleted(dropOffAction);
                 await Task.Delay(5000); // Simulate a delay of 5 seconds
             }
-
-            // Serialize the list to JSON and write it to the log file
-            string jsonLog = JsonSerializer.Serialize(_agvMovement);
-            await File.WriteAllTextAsync(_logFilePath, jsonLog);
         }
         catch (Exception e)
         {

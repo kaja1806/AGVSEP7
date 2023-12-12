@@ -1,6 +1,4 @@
-﻿using AGV.Models;
-using Dapper;
-using Database.SQLHelper;
+﻿using Database.SQLHelper;
 using Shared.Models;
 using WebAPI.Controllers;
 
@@ -15,7 +13,7 @@ public class AgvService : IAgvService
         _sqlConnectionClass = sqlConnectionClass;
     }
 
-    public async Task<string> SaveAgvStatusLogs(string statorId, List<AgvStatusModel> agvStatusModel)
+    public async Task<string> SaveAgvStatusLogs(List<AgvStatusModel> agvStatusModel)
     {
         /*using (var connection = _sqlConnectionClass.GetConnection())
         {
