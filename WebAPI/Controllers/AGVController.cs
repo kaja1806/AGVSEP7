@@ -9,7 +9,12 @@ public class AgvController : ControllerBase
 {
     private IAgvService _agvService;
 
-    [HttpPost("SaveAgvStatusLogs/{statorId}")]
+    public AgvController(IAgvService agvService)
+    {
+        _agvService = agvService;
+    }
+
+    [HttpPost("SaveAgvStatusLogs")]
     public async Task<IActionResult> SaveAgvStatusLogs([FromBody] List<AgvStatusModel> agvStatus)
     {
         var result = await _agvService.SaveAgvStatusLogs(agvStatus);

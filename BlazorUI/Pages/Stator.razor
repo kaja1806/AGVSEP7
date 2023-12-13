@@ -45,12 +45,17 @@
     </div>
 
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Create New Stator</button>
     <div class="form-group">
         <InputText id="ApiResponse" @bind-Value="apiResponseMessage" class="form-control" readonly/>
     </div>
-
 </EditForm>
+
+<div class="form-group">
+    <label for="finished">Stator No which has been finished:</label>
+    <InputNumber id="finished" @bind-Value="statorNo" class="form-control"/>
+    <button class="btn btn-primary" @onclick="SetStatorDone">Submit</button>
+</div>
 
 <table class="table">
     <thead>
@@ -62,6 +67,7 @@
         <th>Date</th>
         <th>MeasurementNo</th>
         <th>StatorNo</th>
+        <th>Status</th>
     </tr>
     </thead>
     <tbody>
@@ -77,6 +83,7 @@
                 <td>@data.Date.ToShortDateString()</td>
                 <td>@data.MeasurementNo</td>
                 <td>@data.StatorNo</td>
+                <td>@data.Status</td>
             </tr>
         }
     }
@@ -88,6 +95,7 @@
     private StatorDto formData = new();
     private List<StatorDto> dataList = new();
     private bool submitted;
+    private int statorNo;
     private string apiResponseMessage;
     private List<StatorDto>? _stators;
 
@@ -101,6 +109,12 @@
     private async Task GetAllStators()
     {
         _stators = await HttpClient.GetFromJsonAsync<List<StatorDto>>($"api/Stator/GetStator") ?? throw new InvalidOperationException();
+    }
+
+    private async Task SetStatorDone()
+    {
+        await HttpClient.PostAsJsonAsync($"api/Stator/SetStatorFinished/{statorNo}", statorNo);
+        await GetAllStators();
     }
 
     private async Task HandleValidSubmit()

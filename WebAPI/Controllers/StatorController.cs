@@ -31,6 +31,21 @@ public class StatorController : ControllerBase
         }
     }
 
+    [HttpPost("SetStatorFinished/{statorNo}")]
+    public async Task<IActionResult> SetStatorFinished(int statorNo)
+    {
+        try
+        {
+            var result = await _statorService.SetStatorFinished(statorNo);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     [HttpPost("SetStator")]
     public async Task<IActionResult> SetStator(StatorDto statorDto)
     {

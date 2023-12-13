@@ -1,7 +1,7 @@
 @page "/AGVOperation"
 @using AGV.Services
 @using global::Shared.Models
-@inject IAGVSimulationService _simulationService
+@inject IAGVSimulationService SimulationService
 
 <div class="container mt-4 text-center">
     <h3 class="text-center">AGV Operation</h3>
@@ -15,7 +15,8 @@
 
         <div class="card mt-3 card-no-border">
             <div class="card-body center-card-content">
-                <button @onclick="StartSimulation" class="btn btn-primary">Activate </button>
+                <input type="text" @bind="_statorNo" placeholder="Enter StatorNo"/>
+                <button @onclick="StartSimulation" class="btn btn-primary" disabled="@(_statorNo == 0)">Activate </button>
             </div>
         </div>
 
@@ -36,7 +37,7 @@
                         {
                             <tr>
                                 <td>@movement.SegmentNo</td>
-                                <td>@movement.Action</td>
+                                <td>@movement.LogText</td>
                                 <td>@movement.AddedAt</td>
                             </tr>
                         }
@@ -58,11 +59,11 @@
 
 @code {
     private List<AgvStatusModel> _simulatedMovements = new();
-    private Guid statorId = new Guid("947177F6-EB1C-4356-A165-7A648F726E67");
+    private int _statorNo;
 
     protected override void OnInitialized()
     {
-        _simulationService.StepCompleted += OnStepCompleted;
+        SimulationService.StepCompleted += OnStepCompleted;
     }
 
     private void OnStepCompleted(object sender, AgvStatusModel step)
@@ -76,10 +77,10 @@
         StateHasChanged();
 
         // Call the simulation service to start the AGV movement simulation
-        await _simulationService.SimulateSegmentMovement(statorId);
+        await SimulationService.SimulateSegmentMovement(_statorNo);
 
-        // Retrieve the simulated movements after simulation completes
-        _simulatedMovements = await _simulationService.GetSimulatedMovements();
+        // Send the simulated movements after simulation completes to database
+        await SimulationService.SendToDatabase(_simulatedMovements);
     }
 
 }

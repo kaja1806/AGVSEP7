@@ -9,4 +9,5 @@ public class StatorDto
     public DateTime Date { get; set; }
     public int MeasurementNo { get; set; }
     public double StatorTemp { get; set; }
+    public bool Status { get; set; }
 }

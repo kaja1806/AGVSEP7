@@ -6,8 +6,6 @@ public interface IAGVSimulationService {
 
     event EventHandler<AgvStatusModel> StepCompleted;
 
-    Task SimulateSegmentMovement(Guid statorId);
-    Task<List<AgvStatusModel>> GetSimulatedMovements(); // Add this method
-    Task<List<SegmentDto>> GetSegmentDetails(Guid statorId);
-
+    Task SimulateSegmentMovement(int statorNo);
+    Task<string> SendToDatabase(List<AgvStatusModel> simulatedMovements);
 }

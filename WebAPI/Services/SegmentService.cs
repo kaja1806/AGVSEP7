@@ -15,10 +15,11 @@ public class SegmentService : ISegmentService
     }
 
 
-    public async Task<List<SegmentModel>> GetSegmentsDb(Guid statorId)
+    private async Task<List<SegmentModel>> GetSegmentsDb(int statorNo)
     {
-        string query = $"SELECT * FROM Segment WHERE StatorID = '{statorId}'";
-        using var connection = _sqlConnectionClass.GetConnection();
+        string query =
+            $"SELECT LocationX, LocationY, Installed, SegmentNo, S.StatorNo FROM Segment inner join dbo.Stator S on S.ID = Segment.StatorID WHERE S.StatorNo = '{statorNo}'";
+        await using var connection = _sqlConnectionClass.GetConnection();
         var result = connection
             .Query<SegmentModel>(query)
             .ToList();
@@ -26,9 +27,9 @@ public class SegmentService : ISegmentService
         return result;
     }
 
-    public async Task<List<SegmentDto>> GetSegmentsForAGV(Guid statorId)
+    public async Task<List<SegmentDto>> GetSegmentsForAGV(int statorNo)
     {
-        var segmentResult = await GetSegmentsDb(statorId);
+        var segmentResult = await GetSegmentsDb(statorNo);
         var segmentList = new List<SegmentDto>();
 
         foreach (var segmentResults in segmentResult)
@@ -48,22 +49,20 @@ public class SegmentService : ISegmentService
         return segmentList;
     }
 
-    public async Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordiantes)
+    public async Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordinates)
     {
-        await using (var connection = _sqlConnectionClass.GetConnection())
+        await using var connection = _sqlConnectionClass.GetConnection();
+        var segmentExist = connection
+            .Query<SegmentModel>(
+                $"SELECT ID FROM Segment WHERE ID = '{segmentId}'").ToList();
+        if (segmentExist.Count != 0)
         {
-            var segmentExist = connection
-                .Query<SegmentModel>(
-                    $"SELECT ID FROM Segment WHERE ID = '{segmentId}'").ToList();
-            if (segmentExist.Count != 0)
-            {
-                await connection.QuerySingleOrDefaultAsync(
-                    $"UPDATE Segment SET LocationX = '{segmentCoordiantes.LocationX}'," +
-                    $"LocationY = '{segmentCoordiantes.LocationY}' WHERE ID = '{segmentId}'");
-                return "Table edited succesfully";
-            }
-
-            return $"Edit unsuccesful: {segmentId} does not exist in database";
+            await connection.QuerySingleOrDefaultAsync(
+                $"UPDATE Segment SET LocationX = '{segmentCoordinates.LocationX}'," +
+                $"LocationY = '{segmentCoordinates.LocationY}' WHERE ID = '{segmentId}'");
+            return "Table edited successfully";
         }
+
+        return $"Edit unsuccessful: {segmentId} does not exist in database";
     }
 }

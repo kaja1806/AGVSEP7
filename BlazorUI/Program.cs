@@ -7,7 +7,7 @@ using Shared.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddScoped<IAGVSimulationService, AGVSimulationService>();
+builder.Services.AddScoped<IAGVSimulationService, AgvSimulationService>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<EventService>();
 

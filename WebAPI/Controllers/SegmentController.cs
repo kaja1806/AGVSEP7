@@ -15,12 +15,12 @@ public class SegmentController : ControllerBase
         _segmentService = segmentService;
     }
 
-    [HttpGet("GetSegments/{statorId}")]
-    public async Task<IActionResult> GetSegments([FromRoute] Guid statorId)
+    [HttpGet("GetSegments/{statorNo}")]
+    public async Task<IActionResult> GetSegments([FromRoute] int statorNo)
     {
         try
         {
-            var result = await _segmentService.GetSegmentsForAGV(statorId);
+            var result = await _segmentService.GetSegmentsForAGV(statorNo);
             return Ok(result);
         }
         catch (Exception e)
@@ -51,12 +51,12 @@ public class SegmentController : ControllerBase
         }
     }
 
-    [HttpGet("SendSegmentDataToAGV/{segmentId}")]
-    public async Task<IActionResult> SendSegmentDataToAgv([FromRoute] Guid segmentId)
+    [HttpGet("SendSegmentDataToAGV/{segmentNo}")]
+    public async Task<IActionResult> SendSegmentDataToAgv([FromRoute] int segmentNo)
     {
         try
         {
-            var result = await _segmentService.GetSegmentsForAGV(segmentId);
+            var result = await _segmentService.GetSegmentsForAGV(segmentNo);
             return Ok(result);
         }
         catch (Exception e)

@@ -1,4 +1,5 @@
-﻿using Database.SQLHelper;
+﻿using Dapper;
+using Database.SQLHelper;
 using Shared.Models;
 using WebAPI.Controllers;
 
@@ -15,16 +16,24 @@ public class AgvService : IAgvService
 
     public async Task<string> SaveAgvStatusLogs(List<AgvStatusModel> agvStatusModel)
     {
-        /*using (var connection = _sqlConnectionClass.GetConnection())
+        try
         {
-            connection.QueryMultipleAsync(
-                $"UPDATE AgvStatus SET Status = '{agvStatusModel.Status}'," +
-                $"Action = '{agvStatusModel.Action}'," +
-                $"Timestamp = '{agvStatusModel.Timestamp}'");
+            foreach (var agvStatus in agvStatusModel)
+            {
+                string query =
+                    $"insert into AGVStatus (Timestamp, AdjustmentCount, LogText, AgvNo, SegmentNo, StatorNo)" +
+                    $"VALUES ('{agvStatus.AddedAt}','{null}','{agvStatus.LogText}','5005', '{agvStatus.SegmentNo}', {agvStatus.StatorNo})";
 
+                await using var connection = _sqlConnectionClass.GetConnection();
+                connection.Query(query);
+            }
 
-            return "Table edited successfully";
-        }*/
-        return null; //Not Done
+            return "Log added to database!";
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

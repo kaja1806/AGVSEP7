@@ -17,6 +17,7 @@
     }
 
     <h3>Measurement Data</h3>
+    <button class="btn btn-primary" @onclick="RefreshData">Refresh</button>
 
     <table class="adjustment-table" style="@GetTableStyle()">
         <thead>
@@ -59,26 +60,6 @@
     </table>
 </div>
 
-<div class="calculation-section">
-    <input type="text" @bind="statorNo" placeholder="Enter SegmentNo"/>
-    <button class="btn btn-primary" @onclick="RunCalculation" disabled="@(_calculationResults == null || statorNo == 0)">Run calculation</button>
-
-    @if (_calculationResults != null)
-    {
-        <!-- Display calculation results here -->
-    }
-    else
-    {
-        @if (statorNo != 0)
-        {
-            <div>
-                <text>Calculation needed for SegmentNo: @statorNo</text>
-                <button class="btn btn-primary" @onclick="RunCalculation">Run calculation</button>
-            </div>
-        }
-    }
-</div>
-
 @code {
     private List<AdjustedCalculationDto>? _calculationResults;
     private int statorNo;
@@ -89,27 +70,16 @@
         await GetCalculationResult();
     }
 
+    private async Task RefreshData()
+    {
+        await GetCalculationResult();
+        StateHasChanged(); // Trigger UI update
+    }
+
     private async Task GetCalculationResult()
     {
         IsLoading = true; // Set loading state to true before making the API call
         _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetCalculationResult") ?? throw new InvalidOperationException();
-        IsLoading = false; // Set loading state to false after the API call is complete
-    }
-
-    private async Task RunCalculation()
-    {
-        IsLoading = true; // Set loading state to true before making the API call
-        var result = await HttpClient.PostAsJsonAsync($"api/controller/RunCalculationForSegment/{statorNo}", statorNo) ?? throw new InvalidOperationException();
-        var jsonResponse = await result.Content.ReadAsStringAsync();
-
-        if (result.IsSuccessStatusCode)
-        {
-            await GetCalculationResult();
-        }
-        else
-        {
-        }
-
         IsLoading = false; // Set loading state to false after the API call is complete
     }
 
