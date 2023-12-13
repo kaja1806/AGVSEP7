@@ -4,10 +4,10 @@ using Database.SQLHelper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Helpers;
 using Shared.Models;
-using WebAPI.Services;
 
-public class UserService : IUserService
-{
+namespace WebAPI.Services;
+
+public class UserService : IUserService {
     private readonly SqlConnectionClass _sqlConnectionClass;
 
     public UserService(SqlConnectionClass sqlConnectionClass)
@@ -94,7 +94,7 @@ public class UserService : IUserService
     {
         await using var connection = _sqlConnectionClass.GetConnection();
         var result = await connection.QueryFirstOrDefaultAsync<UserModelDto>(
-            $"SELECT 1 FROM Operator WHERE Email = '{email}' AND Password = '{password}' ");
+        $"SELECT 1 FROM Operator WHERE Email = '{email}' AND Password = '{password}' ");
 
         return result != null;
     }

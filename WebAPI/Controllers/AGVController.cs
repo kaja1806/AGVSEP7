@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AgvController : ControllerBase
-{
-    private IAgvService _agvService;
+public class AgvController : ControllerBase {
+    private readonly IAgvService _agvService;
 
     public AgvController(IAgvService agvService)
     {
@@ -17,16 +17,15 @@ public class AgvController : ControllerBase
     [HttpPost("SaveAgvStatusLogs")]
     public async Task<IActionResult> SaveAgvStatusLogs([FromBody] List<AgvStatusModel> agvStatus)
     {
-        var result = await _agvService.SaveAgvStatusLogs(agvStatus);
-        return Ok(result);
-    }
+        try
+        {
+            var result = await _agvService.SaveAgvStatusLogs(agvStatus);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Internal Server Error + {ex.Message}");
 
-    [HttpGet("GetAgvStatusLog/{statorId}")]
-    public async Task<IActionResult> GetAgvStatusLog(Guid statorId)
-    {
-        // Retrieve the log entries from the database based on the statorId
-        // ...
-
-        return Ok();
+        }
     }
 }

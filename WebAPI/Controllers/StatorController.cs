@@ -8,7 +8,6 @@ namespace WebAPI.Controllers;
 [Route("api/[controller]")]
 public class StatorController : ControllerBase
 {
-    // making IStatorService visible for controller
     private readonly IStatorService _statorService;
 
     public StatorController(IStatorService statorService)
@@ -24,10 +23,9 @@ public class StatorController : ControllerBase
             var result = await _statorService.GetStator();
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 
@@ -39,10 +37,9 @@ public class StatorController : ControllerBase
             var result = await _statorService.SetStatorFinished(statorNo);
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 
@@ -63,8 +60,7 @@ public class StatorController : ControllerBase
                 }
                 else
                 {
-                    //_logger.LogError("Failed to create Stator. SetNewStator returned false.");
-                    return StatusCode(500, "Failed to create Stator");
+                    return BadRequest("Failed to create Stator");
                 }
             }
             else
@@ -74,9 +70,7 @@ public class StatorController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it as needed
-            //_logger.LogError(ex, "An unexpected error occurred during SetStator");
-            return StatusCode(500, "Internal Server Error");
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 }

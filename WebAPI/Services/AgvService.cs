@@ -5,8 +5,7 @@ using WebAPI.Controllers;
 
 namespace WebAPI.Services;
 
-public class AgvService : IAgvService
-{
+public class AgvService : IAgvService {
     private readonly SqlConnectionClass _sqlConnectionClass;
 
     public AgvService(SqlConnectionClass sqlConnectionClass)
@@ -32,8 +31,7 @@ public class AgvService : IAgvService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return $"An unexpected error occurred: {e.Message}";
         }
     }
 }

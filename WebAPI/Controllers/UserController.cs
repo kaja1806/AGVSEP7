@@ -6,8 +6,7 @@ namespace WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
-{
+public class UserController : ControllerBase {
     private readonly IUserService _userService;
 
     public UserController(IUserService userService)
@@ -24,9 +23,9 @@ public class UserController : ControllerBase
             var result = await _userService.CreateUser(userModelDto);
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            return BadRequest(e.Message);
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 
@@ -56,9 +55,9 @@ public class UserController : ControllerBase
             var result = await _userService.LoginUser(userModel);
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            return BadRequest(e.Message);
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 
@@ -71,9 +70,9 @@ public class UserController : ControllerBase
 
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            return new BadRequestObjectResult(e);
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 }

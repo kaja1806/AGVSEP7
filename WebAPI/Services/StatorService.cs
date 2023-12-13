@@ -5,8 +5,7 @@ using Shared.Models;
 
 namespace WebAPI.Services;
 
-public class StatorService : IStatorService
-{
+public class StatorService : IStatorService {
     private readonly SqlConnectionClass _sqlConnectionClass;
 
     public StatorService(SqlConnectionClass sqlConnectionClass)
@@ -32,7 +31,7 @@ public class StatorService : IStatorService
                 $"INSERT INTO Stator(Name, StatorNo, ProductionOrder, MeasurementNo, Operator, Date, StatorTemp, Finished)" +
                 $"VALUES ('{statorDto.Name}', {statorDto.StatorNo}, {statorDto.ProductionOrder}, {statorDto.MeasurementNo},'{statorDto.Operator}', '{statorDto.Date:yyyy-MM-dd}', {statorDto.StatorTemp}, 0)";
             await connection.QuerySingleOrDefaultAsync(query);
-                connection.Query($"UPDATE Segment SET StatorID = ST.ID FROM Segment S INNER JOIN dbo.Stator ST ON ST.StatorNo = {statorDto.StatorNo};");
+            connection.Query($"UPDATE Segment SET StatorID = ST.ID FROM Segment S INNER JOIN dbo.Stator ST ON ST.StatorNo = {statorDto.StatorNo};");
 
             return true;
         }

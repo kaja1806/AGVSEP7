@@ -2,8 +2,7 @@
 
 namespace WebAPI.Services;
 
-public interface IStatorService
-{
+public interface IStatorService {
     Task<List<StatorDto>> GetStator();
     Task<bool> SetNewStator(StatorDto statorDto);
     Task<string> SetStatorFinished(int statorNo);

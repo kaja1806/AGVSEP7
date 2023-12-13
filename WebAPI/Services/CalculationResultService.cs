@@ -5,8 +5,7 @@ using Shared.Models;
 
 namespace WebAPI.Services;
 
-public class CalculationResultService : ICalculationResultService
-{
+public class CalculationResultService : ICalculationResultService {
     private readonly SqlConnectionClass _sqlConnectionClass;
 
     public CalculationResultService(SqlConnectionClass sqlConnectionClass)
@@ -16,21 +15,29 @@ public class CalculationResultService : ICalculationResultService
 
     private async Task<List<CalculationResultModel>> GetCalculationsFromDb(int? statorNo)
     {
-        string? condition = null;
-        if (statorNo != null)
+        try
         {
-            condition = $"where StatorNo = '{statorNo}'";
+            string? condition = null;
+            if (statorNo != null)
+            {
+                condition = $"where StatorNo = '{statorNo}'";
+            }
+
+            string query =
+                $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, Deviation, Adjustment, ST.StatorNo from CalculationResult CR " +
+                $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
+                $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
+            await using var connection = _sqlConnectionClass.GetConnection();
+
+            var result = connection
+                .Query<CalculationResultModel>(query).ToList();
+            return result;
         }
-
-        string query =
-            $"select CR.Date, MeasuredValue, Tolerance, S.SegmentNo, SegmentId, Deviation, Adjustment, ST.StatorNo from CalculationResult CR " +
-            $"inner join dbo.Segment S on S.ID = CR.SegmentId " +
-            $"inner join dbo.Stator ST on ST.ID = S.StatorID {condition}";
-        await using var connection = _sqlConnectionClass.GetConnection();
-
-        var result = connection
-            .Query<CalculationResultModel>(query).ToList();
-        return result;
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<List<AdjustedCalculationDto>> GetCalculationResult(int? statorNo)
@@ -52,7 +59,6 @@ public class CalculationResultService : ICalculationResultService
             };
             adjustedCalcList.Add(adjustedCalcDto);
         }
-
         return adjustedCalcList;
     }
 
@@ -73,11 +79,10 @@ public class CalculationResultService : ICalculationResultService
                 await connection.ExecuteAsync(query);
             }
 
-            return $"Table edited successfully";
+            return "Table edited successfully";
         }
         catch (Exception e)
         {
-            // You might want to return a more specific error message depending on your requirements
             return $"An unexpected error occurred: {e.Message}";
         }
     }

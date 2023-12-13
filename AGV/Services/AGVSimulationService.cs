@@ -3,9 +3,9 @@ using Shared.Models;
 
 namespace AGV.Services;
 
-public class AgvSimulationService : IAGVSimulationService
+public class AgvSimulationService : IAGVSimulationService 
 {
-    private readonly List<AgvStatusModel> _agvMovement = new();
+    private readonly List<AgvStatusModel> _agvMovement = new List<AgvStatusModel>();
     private readonly HttpClient _httpClient;
     public event EventHandler<AgvStatusModel>? StepCompleted;
 

@@ -9,12 +9,9 @@
 
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-6">
-            <!-- Status and Coordinates cards (existing code) -->
-        </div>
-
         <div class="card mt-3 card-no-border">
             <div class="card-body center-card-content">
+                <text>Insert stator No to activate AGV movement:  </text>
                 <input type="text" @bind="_statorNo" placeholder="Enter StatorNo"/>
                 <button @onclick="StartSimulation" class="btn btn-primary" disabled="@(_statorNo == 0)">Activate </button>
             </div>
@@ -46,19 +43,12 @@
                 </div>
             </div>
         </div>
-
-        <div class="card mt-3">
-            <div class="card-body">
-                <h5 class="card-title">Route Map</h5>
-                <div id="map" style="height: 300px;"></div>
-            </div>
-        </div>
     </div>
 </div>
 
 
 @code {
-    private List<AgvStatusModel> _simulatedMovements = new();
+    private List<AgvStatusModel> _simulatedMovements = new List<AgvStatusModel>();
     private int _statorNo;
 
     protected override void OnInitialized()

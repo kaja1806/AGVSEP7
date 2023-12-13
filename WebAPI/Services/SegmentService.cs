@@ -5,8 +5,7 @@ using Shared.Models;
 
 namespace WebAPI.Services;
 
-public class SegmentService : ISegmentService
-{
+public class SegmentService : ISegmentService {
     private readonly SqlConnectionClass _sqlConnectionClass;
 
     public SegmentService(SqlConnectionClass sqlConnectionClass)
@@ -27,7 +26,7 @@ public class SegmentService : ISegmentService
         return result;
     }
 
-    public async Task<List<SegmentDto>> GetSegmentsForAGV(int statorNo)
+    public async Task<List<SegmentDto>> GetSegmentsForAgv(int statorNo)
     {
         var segmentResult = await GetSegmentsDb(statorNo);
         var segmentList = new List<SegmentDto>();
@@ -47,22 +46,5 @@ public class SegmentService : ISegmentService
         }
 
         return segmentList;
-    }
-
-    public async Task<string> SetSegmentCoordinates(Guid segmentId, Coordinates segmentCoordinates)
-    {
-        await using var connection = _sqlConnectionClass.GetConnection();
-        var segmentExist = connection
-            .Query<SegmentModel>(
-                $"SELECT ID FROM Segment WHERE ID = '{segmentId}'").ToList();
-        if (segmentExist.Count != 0)
-        {
-            await connection.QuerySingleOrDefaultAsync(
-                $"UPDATE Segment SET LocationX = '{segmentCoordinates.LocationX}'," +
-                $"LocationY = '{segmentCoordinates.LocationY}' WHERE ID = '{segmentId}'");
-            return "Table edited successfully";
-        }
-
-        return $"Edit unsuccessful: {segmentId} does not exist in database";
     }
 }

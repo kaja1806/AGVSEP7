@@ -68,6 +68,11 @@
     protected override async Task OnInitializedAsync()
     {
         await GetCalculationResult();
+        if (_calculationResults.Any(x=>x.Deviation == null))
+        {
+            await RunCalculation(_calculationResults.First().StatorNo);
+            await OnInitializedAsync();
+        }
     }
 
     private async Task RefreshData()
@@ -81,6 +86,12 @@
         IsLoading = true; // Set loading state to true before making the API call
         _calculationResults = await HttpClient.GetFromJsonAsync<List<AdjustedCalculationDto>>($"api/controller/GetCalculationResult") ?? throw new InvalidOperationException();
         IsLoading = false; // Set loading state to false after the API call is complete
+    }
+    private async Task RunCalculation(int? statorId)
+    {
+        IsLoading = true; 
+        var postAsJsonAsync = await HttpClient.PostAsJsonAsync($"api/controller/RunCalculationForSegment/{statorId}", statorId) ?? throw new InvalidOperationException();
+        IsLoading = false; 
     }
 
     private string GetAdjustmentStyle(bool? columnColor)

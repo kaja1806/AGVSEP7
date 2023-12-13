@@ -20,34 +20,12 @@ public class SegmentController : ControllerBase
     {
         try
         {
-            var result = await _segmentService.GetSegmentsForAGV(statorNo);
+            var result = await _segmentService.GetSegmentsForAgv(statorNo);
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    [HttpPost("SetSegmentCoordinates/{segmentId},{coordinateX}, {coordinateY}")]
-    public async Task<IActionResult> SetSegmentCoordinates([FromRoute] Guid segmentId, double coordinateX,
-        double coordinateY)
-    {
-        try
-        {
-            var segmentCoordinates = new Coordinates()
-            {
-                LocationX = coordinateX,
-                LocationY = coordinateY
-            };
-            var result = await _segmentService.SetSegmentCoordinates(segmentId, segmentCoordinates);
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 
@@ -56,13 +34,12 @@ public class SegmentController : ControllerBase
     {
         try
         {
-            var result = await _segmentService.GetSegmentsForAGV(segmentNo);
+            var result = await _segmentService.GetSegmentsForAgv(segmentNo);
             return Ok(result);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest($"Internal Server Error + {ex.Message}");
         }
     }
 }

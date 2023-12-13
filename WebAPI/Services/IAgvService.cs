@@ -1,8 +1,7 @@
 ﻿using Shared.Models;
 
-namespace WebAPI.Controllers;
+namespace WebAPI.Services;
 
-public interface IAgvService
-{
+public interface IAgvService {
     Task<string> SaveAgvStatusLogs(List<AgvStatusModel> agvStatus);
 }

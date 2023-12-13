@@ -1,6 +1,4 @@
 ﻿namespace Database.Models;
-// will be used for reporting 
-// all of the values from database we want to use for reporting
 
 public class CalculationResultModel
 {
